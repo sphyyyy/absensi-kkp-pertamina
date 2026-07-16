@@ -7,7 +7,10 @@ echo =================================================================
 echo.
 cd /d "%~dp0"
 
-echo [1/3] Memeriksa status Git di folder ini...
+echo [1/3] Memeriksa konfigurasi dan status Git di folder ini...
+git config --global user.email "odieflomotobing@gmail.com" >nul 2>&1
+git config --global user.name "Odie Flo Motobing" >nul 2>&1
+
 if not exist ".git" (
     echo [*] Inisialisasi Git repository baru...
     git init
@@ -16,7 +19,7 @@ if not exist ".git" (
 echo.
 echo [2/3] Menyiapkan seluruh file proyek...
 git add .
-git commit -m "Siap deploy ke Vercel dan PostgreSQL Cloud"
+git commit -m "Siap deploy ke Vercel dan PostgreSQL Cloud" >nul 2>&1
 git branch -M main
 
 echo.
@@ -36,7 +39,7 @@ if "%REPO_URL%"=="" (
 
 echo.
 echo [3/3] Menghubungkan dan meng-upload (push) ke GitHub...
-git remote remove origin 2>nul
+git remote remove origin >nul 2>&1
 git remote add origin %REPO_URL%
 git push -u origin main
 
