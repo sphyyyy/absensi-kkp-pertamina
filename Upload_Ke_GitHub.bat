@@ -41,7 +41,7 @@ echo.
 echo [3/3] Menghubungkan dan meng-upload (push) ke GitHub...
 git remote remove origin >nul 2>&1
 git remote add origin %REPO_URL%
-git push -u origin main
+git push -u origin main --force
 
 echo.
 echo =================================================================
