@@ -18,11 +18,17 @@ from app.utils.helpers import format_date, format_time
 
 def _ensure_reports_dir():
     """Ensure the reports directory exists."""
-    reports_dir = os.path.join(
-        current_app.root_path, '..', 'reports'
-    )
-    os.makedirs(reports_dir, exist_ok=True)
+    from app.config import is_serverless_env
+    if is_serverless_env():
+        reports_dir = '/tmp/reports'
+    else:
+        reports_dir = os.path.join(current_app.root_path, '..', 'reports')
+    try:
+        os.makedirs(reports_dir, exist_ok=True)
+    except OSError:
+        pass
     return os.path.abspath(reports_dir)
+
 
 
 def generate_pdf_report(start_date, end_date, title=None):

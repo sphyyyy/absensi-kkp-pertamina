@@ -8,10 +8,16 @@ from app import create_app
 from app.extensions import db
 
 app = create_app()
+_db_initialized = False
 
-# Di lingkungan serverless, pastikan tabel dibuat/diperiksa pada request context bila belum ada
-with app.app_context():
-    try:
-        db.create_all()
-    except Exception as e:
-        print(f"[Warning] Gagal inisialisasi tabel database saat startup Vercel: {e}")
+
+@app.before_request
+def ensure_db_initialized():
+    global _db_initialized
+    if not _db_initialized:
+        try:
+            db.create_all()
+            _db_initialized = True
+        except Exception as e:
+            print(f"[Warning] Gagal inisialisasi tabel database saat request Vercel: {e}")
+

@@ -39,7 +39,11 @@ def save_photo(photo_data, user_id, attendance_type):
         str: Relative path to the saved file.
     """
     upload_folder = current_app.config['UPLOAD_FOLDER']
-    os.makedirs(upload_folder, exist_ok=True)
+    try:
+        os.makedirs(upload_folder, exist_ok=True)
+    except OSError:
+        pass
+
 
     # Generate unique filename
     unique_id = uuid.uuid4().hex[:8]

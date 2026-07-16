@@ -122,10 +122,17 @@ def _configure_logging(app):
 
 
 def _ensure_directories(app):
-    """Create required directories if they don't exist."""
+    """Create required directories if they don't exist (safe for Vercel/cloud read-only filesystem)."""
+    from app.config import is_serverless_env
+    is_serverless = is_serverless_env()
     dirs = [
-        app.config.get('UPLOAD_FOLDER', 'uploads/selfies'),
-        'reports',
+        app.config.get('UPLOAD_FOLDER', '/tmp/selfies' if is_serverless else 'uploads/selfies'),
+        '/tmp/reports' if is_serverless else 'reports',
     ]
     for d in dirs:
-        os.makedirs(d, exist_ok=True)
+        try:
+            os.makedirs(d, exist_ok=True)
+        except OSError as e:
+            # Di serverless Vercel, abaikan error jika mencoba membuat folder di sistem file read-only
+            app.logger.warning(f"Could not create directory {d}: {e}")
+
