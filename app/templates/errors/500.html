@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}500 — Server Error{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 60vh">
+    <div class="text-center">
+        <h1 class="display-1 fw-bold text-danger">500</h1>
+        <h4 class="fw-bold">Terjadi Kesalahan</h4>
+        <p class="text-muted">Terjadi kesalahan pada server. Silakan coba lagi nanti.</p>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary-custom mt-2">
+            <i class="bi bi-house me-1"></i>Kembali ke Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

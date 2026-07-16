@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 py-3">
+    <!-- Greeting Header -->
+    <div class="mb-4 animate-fade-in">
+        <h4 class="fw-bold mb-1">{{ greeting }}, {{ current_user.full_name.split()[0] }} 👋</h4>
+        <p class="text-muted mb-0">
+            <i class="bi bi-calendar3 me-1"></i>{{ today_formatted }}
+            <span class="mx-2">•</span>
+            <i class="bi bi-building me-1"></i>{{ current_user.instansi or 'KKP Pertamina' }}
+        </p>
+    </div>
+
+    <!-- Status Card -->
+    <div class="status-card mb-4 animate-slide-up" id="statusCard">
+        {% if record and record.has_checked_in and record.has_checked_out %}
+        <!-- Completed -->
+        <div class="status-icon status-complete">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="status-info">
+            <h5 class="fw-bold mb-1">Absensi Lengkap</h5>
+            <p class="mb-0 text-muted">
+                Masuk: {{ format_time(record.check_in_time) }} •
+                Pulang: {{ format_time(record.check_out_time) }}
+            </p>
+        </div>
+        <span class="badge bg-success-subtle text-success status-badge">
+            {{ record.status | capitalize }}
+        </span>
+
+        {% elif record and record.has_checked_in %}
+        <!-- Checked in, not out yet -->
+        <div class="status-icon status-partial">
+            <i class="bi bi-clock-fill"></i>
+        </div>
+        <div class="status-info">
+            <h5 class="fw-bold mb-1">Sudah Absen Masuk</h5>
+            <p class="mb-0 text-muted">
+                Masuk: {{ format_time(record.check_in_time) }} •
+                Belum absen pulang
+            </p>
+        </div>
+        <span class="badge bg-warning-subtle text-warning status-badge">
+            Menunggu Pulang
+        </span>
+
+        {% else %}
+        <!-- Not checked in -->
+        <div class="status-icon status-pending">
+            <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <div class="status-info">
+            <h5 class="fw-bold mb-1">Belum Absen</h5>
+            <p class="mb-0 text-muted">Silakan lakukan absensi hari ini</p>
+        </div>
+        <span class="badge bg-danger-subtle text-danger status-badge">
+            Belum Absen
+        </span>
+        {% endif %}
+    </div>
+
+    <!-- Action Button -->
+    <div class="mb-4 animate-slide-up" style="animation-delay: 0.1s">
+        {% if not record or not record.has_checked_in %}
+        <button class="btn btn-action btn-action-checkin w-100" id="btnCheckin" onclick="startAttendance('check_in')">
+            <div class="btn-action-icon">
+                <i class="bi bi-box-arrow-in-right"></i>
+            </div>
+            <div class="btn-action-text">
+                <span class="fw-bold">Absen Masuk</span>
+                <small class="d-block opacity-75">Tap untuk memulai absensi</small>
+            </div>
+            <i class="bi bi-chevron-right btn-action-arrow"></i>
+        </button>
+
+        {% elif record and record.has_checked_in and not record.has_checked_out %}
+        <button class="btn btn-action btn-action-checkout w-100" id="btnCheckout" onclick="startAttendance('check_out')">
+            <div class="btn-action-icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </div>
+            <div class="btn-action-text">
+                <span class="fw-bold">Absen Pulang</span>
+                <small class="d-block opacity-75">Tap untuk absen pulang</small>
+            </div>
+            <i class="bi bi-chevron-right btn-action-arrow"></i>
+        </button>
+
+        {% else %}
+        <div class="completed-card text-center py-4">
+            <i class="bi bi-patch-check-fill text-success" style="font-size: 2.5rem"></i>
+            <h5 class="mt-2 mb-1 fw-bold">Absensi Selesai!</h5>
+            <p class="text-muted mb-0">Absensi Anda hari ini sudah lengkap.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Statistik -->
+    <div class="row g-3 mb-4 animate-slide-up" style="animation-delay: 0.2s">
+        <div class="col-4">
+            <div class="stat-card">
+                <div class="stat-value text-success">{{ stats.hadir + stats.terlambat }}</div>
+                <div class="stat-label">Hadir</div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="stat-card">
+                <div class="stat-value text-warning">{{ stats.terlambat }}</div>
+                <div class="stat-label">Terlambat</div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="stat-card">
+                <div class="stat-value text-primary">{{ stats.persentase }}%</div>
+                <div class="stat-label">Kehadiran</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Riwayat Minggu Ini -->
+    <div class="animate-slide-up" style="animation-delay: 0.3s">
+        <h6 class="fw-bold mb-3">
+            <i class="bi bi-calendar-week me-2"></i>Riwayat Minggu Ini
+        </h6>
+        {% if weekly_records %}
+        <div class="history-list">
+            {% for rec in weekly_records %}
+            <div class="history-item">
+                <div class="history-date">
+                    <span class="history-day">{{ rec.attendance_date.strftime('%d') }}</span>
+                    <span class="history-month">{{ rec.attendance_date.strftime('%b') }}</span>
+                </div>
+                <div class="history-detail">
+                    <div class="fw-medium">
+                        {{ format_time(rec.check_in_time) }}
+                        {% if rec.check_out_time %} — {{ format_time(rec.check_out_time) }}{% endif %}
+                    </div>
+                    <small class="text-muted">{{ rec.attendance_date.strftime('%A') }}</small>
+                </div>
+                <span class="badge
+                    {% if rec.status == 'hadir' %}bg-success-subtle text-success
+                    {% elif rec.status == 'terlambat' %}bg-warning-subtle text-warning
+                    {% else %}bg-danger-subtle text-danger{% endif %}
+                    history-badge">
+                    {{ rec.status | capitalize }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state text-center py-4">
+            <i class="bi bi-calendar-x text-muted" style="font-size: 2rem"></i>
+            <p class="text-muted mt-2 mb-0">Belum ada data absensi minggu ini.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Attendance Modal -->
+<div class="modal fade" id="attendanceModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content glass-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="attendanceModalTitle">Absen Masuk</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Step 1: GPS -->
+                <div id="stepGPS" class="attendance-step">
+                    <div class="step-icon">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                    <h6 class="fw-bold mt-3">Mendeteksi Lokasi GPS...</h6>
+                    <p class="text-muted small">Mohon pastikan GPS aktif pada perangkat Anda dan berada di radius kantor.</p>
+                    <div id="gpsInfo" class="d-none">
+                        <div class="gps-info-card">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Latitude</span>
+                                <span id="gpsLat" class="fw-medium">-</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Longitude</span>
+                                <span id="gpsLng" class="fw-medium">-</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Akurasi</span>
+                                <span id="gpsAcc" class="fw-medium">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="gpsError" class="alert alert-danger d-none mt-3"></div>
+                </div>
+
+                <!-- Step 2: Camera / Selfie -->
+                <div id="stepCamera" class="attendance-step d-none">
+                    <h6 class="fw-bold mb-3">Ambil Foto Selfie</h6>
+                    <div class="camera-container">
+                        <video id="cameraPreview" autoplay playsinline class="camera-video"></video>
+                        <canvas id="cameraCanvas" class="d-none"></canvas>
+                        <img id="capturedPhoto" class="captured-photo d-none" alt="Selfie">
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-outline-light flex-fill" id="btnCapture" onclick="capturePhoto()">
+                            <i class="bi bi-camera me-1"></i> Ambil Foto
+                        </button>
+                        <button class="btn btn-outline-warning flex-fill d-none" id="btnRetake" onclick="retakePhoto()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Ulang
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Submit -->
+                <div id="stepSubmit" class="attendance-step d-none">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <h6 class="fw-bold">Mengirim Data Absensi...</h6>
+                        <p class="text-muted small">Mohon tunggu sebentar.</p>
+                    </div>
+                </div>
+
+                <!-- Step 4: Result -->
+                <div id="stepResult" class="attendance-step d-none text-center">
+                    <div id="resultIcon"></div>
+                    <h5 id="resultTitle" class="fw-bold mt-3"></h5>
+                    <p id="resultMessage" class="text-muted"></p>
+                    <button class="btn btn-primary-custom mt-2" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/geolocation.js') }}"></script>
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

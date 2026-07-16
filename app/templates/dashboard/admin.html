@@ -1,0 +1,789 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Portal - Sistem Absensi KKP{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h3 class="fw-bold mb-1 text-primary">
+            <i class="bi bi-shield-lock-fill text-primary me-2"></i>Admin Portal & Manajemen Pengguna
+        </h3>
+        <p class="text-secondary mb-0">Kelola data mahasiswa magang (Bulk Import Excel), dosen pembimbing, serta konfigurasi sistem runtime.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <span class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 rounded-pill">
+            <i class="bi bi-person-check-fill me-1"></i> Role: Administrator
+        </span>
+    </div>
+</div>
+
+<!-- Nav Tabs -->
+<ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active rounded-pill px-4 py-2" id="mahasiswa-tab" data-bs-toggle="pill"
+                data-bs-target="#tab-mahasiswa" type="button" role="tab">
+            <i class="bi bi-people-fill me-2"></i>Mahasiswa & Import Excel
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill px-4 py-2" id="dosen-tab" data-bs-toggle="pill"
+                data-bs-target="#tab-dosen" type="button" role="tab">
+            <i class="bi bi-person-badge-fill me-2"></i>Dosen Pembimbing
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill px-4 py-2" id="settings-tab" data-bs-toggle="pill"
+                data-bs-target="#tab-settings" type="button" role="tab">
+            <i class="bi bi-geo-alt-fill me-2"></i>Pengaturan Geofence & Jam Absensi
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill px-4 py-2" id="logs-tab" data-bs-toggle="pill"
+                data-bs-target="#tab-logs" type="button" role="tab">
+            <i class="bi bi-shield-check me-2"></i>Audit Log Sistem
+        </button>
+    </li>
+</ul>
+
+<!-- Tab Contents -->
+<div class="tab-content" id="adminTabsContent">
+    <!-- TAB 1: MAHASISWA & IMPORT EXCEL -->
+    <div class="tab-pane fade show active" id="tab-mahasiswa" role="tabpanel">
+        <div class="glass-card p-4 mb-4 border-primary">
+            <div class="row align-items-center g-3">
+                <div class="col-lg-8">
+                    <h6 class="fw-bold text-primary mb-2"><i class="bi bi-file-earmark-spreadsheet text-success me-2"></i>Zero Effort: Bulk Import Mahasiswa via Excel</h6>
+                    <p class="text-secondary small mb-0">
+                        Mahasiswa tidak perlu melakukan pendaftaran mandiri di web. Anda cukup mengunduh template Excel, mengisi daftar nama, lalu mengunggahnya. Sistem otomatis membuatkan akun dengan password default <code class="text-primary bg-light border px-2 py-1 rounded">mhs123</code>.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end d-flex flex-wrap gap-2 justify-content-lg-end">
+                    <a href="{{ url_for('api.get_template_excel') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-download me-1"></i>Download Template
+                    </a>
+                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalImportExcel">
+                        <i class="bi bi-upload me-1"></i>Upload Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                <h6 class="fw-bold mb-0 text-primary">
+                    <i class="bi bi-list-ul me-2"></i>Daftar Mahasiswa Magang (<span id="mhsCount">{{ mahasiswa_list|length }}</span>)
+                </h6>
+                <div class="d-flex gap-2">
+                    <input type="text" id="searchMhs" class="form-control form-control-sm form-control-dark" placeholder="Cari NIM/Nama/Kampus..." style="width: 220px;">
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddUser" onclick="setupAddModal('mahasiswa')">
+                        <i class="bi bi-plus-lg me-1"></i>Tambah Manual
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive custom-table-scroll">
+                <table class="table table-dark-custom" id="tableMahasiswa">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NIM</th>
+                            <th>Nama Lengkap</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Kampus</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in mahasiswa_list %}
+                        <tr id="user-row-{{ m.id }}">
+                            <td>{{ loop.index }}</td>
+                            <td class="fw-bold text-info">{{ m.nim or '-' }}</td>
+                            <td>{{ m.full_name }}</td>
+                            <td><code>{{ m.username }}</code></td>
+                            <td>{{ m.email }}</td>
+                            <td>{{ m.instansi or '-' }}</td>
+                            <td>
+                                <span class="badge {{ 'bg-success-subtle text-success' if m.is_active else 'bg-danger-subtle text-danger' }}" id="status-badge-{{ m.id }}">
+                                    {{ 'Aktif' if m.is_active else 'Nonaktif' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" title="Edit Data Profil" onclick="openEditModal({{ m.id }}, 'mahasiswa', '{{ m.nim or '' }}', '{{ m.username }}', '{{ m.full_name }}', '{{ m.email }}', '{{ m.instansi or '' }}', '{{ m.phone or '' }}')">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning" title="Reset Password ke mhs123" onclick="resetPassword({{ m.id }}, '{{ m.username }}', 'mhs123')">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" title="Aktifkan/Nonaktifkan" onclick="toggleStatus({{ m.id }}, '{{ m.username }}')">
+                                        <i class="bi bi-power"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger" title="Hapus Akun" onclick="deleteUser({{ m.id }}, '{{ m.username }}')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-secondary py-4">Belum ada data mahasiswa magang. Silakan upload file Excel.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: DOSEN PEMBIMBING -->
+    <div class="tab-pane fade" id="tab-dosen" role="tabpanel">
+        <div class="glass-card p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                <h6 class="fw-bold mb-0 text-primary">
+                    <i class="bi bi-person-badge me-2"></i>Daftar Dosen Pembimbing (<span id="dosenCount">{{ dosen_list|length }}</span>)
+                </h6>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddUser" onclick="setupAddModal('dosen')">
+                    <i class="bi bi-plus-lg me-1"></i>Tambah Dosen Baru
+                </button>
+            </div>
+
+            <div class="table-responsive custom-table-scroll">
+                <table class="table table-dark-custom">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Username</th>
+                            <th>Nama Lengkap</th>
+                            <th>Email</th>
+                            <th>No HP</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in dosen_list %}
+                        <tr id="user-row-{{ d.id }}">
+                            <td>{{ loop.index }}</td>
+                            <td><code>{{ d.username }}</code></td>
+                            <td class="fw-bold">{{ d.full_name }}</td>
+                            <td>{{ d.email }}</td>
+                            <td>{{ d.phone or '-' }}</td>
+                            <td>
+                                <span class="badge {{ 'bg-success-subtle text-success' if d.is_active else 'bg-danger-subtle text-danger' }}" id="status-badge-{{ d.id }}">
+                                    {{ 'Aktif' if d.is_active else 'Nonaktif' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" title="Edit Data Profil" onclick="openEditModal({{ d.id }}, 'dosen', '', '{{ d.username }}', '{{ d.full_name }}', '{{ d.email }}', '{{ d.instansi or '' }}', '{{ d.phone or '' }}')">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning" title="Reset Password ke dosen123" onclick="resetPassword({{ d.id }}, '{{ d.username }}', 'dosen123')">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" title="Aktifkan/Nonaktifkan" onclick="toggleStatus({{ d.id }}, '{{ d.username }}')">
+                                        <i class="bi bi-power"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger" title="Hapus Akun" onclick="deleteUser({{ d.id }}, '{{ d.username }}')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-secondary py-4">Belum ada data dosen.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: PENGATURAN GEOFENCE & JAM KERJA -->
+    <div class="tab-pane fade" id="tab-settings" role="tabpanel">
+        <form id="formSettings" onsubmit="updateSettings(event)">
+            <!-- CARD 1: Geofence GPS -->
+            <div class="settings-card-item bg-white rounded-4 p-4 mb-4 border shadow-sm">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center pb-3 mb-4 border-bottom gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
+                            <i class="bi bi-geo-alt-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1 text-dark">Konfigurasi Titik Koordinat Geofence GPS</h6>
+                            <p class="text-secondary small mb-0">Tentukan koordinat pusat kantor dan batas toleransi jarak absensi masuk/pulang.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-2 shadow-sm fw-medium d-flex align-items-center gap-1 flex-shrink-0" onclick="useMyCurrentLocation(this)" title="Otomatis mengambil koordinat GPS posisi Anda saat ini">
+                        <i class="bi bi-crosshair me-1"></i><span>📍 Set ke Lokasi GPS Sekarang</span>
+                    </button>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Latitude (Garis Lintang)</label>
+                        <input type="text" class="form-control form-control-dark font-monospace" name="GEOFENCE_LAT" value="{{ settings_dict.get('GEOFENCE_LAT', '-5.1477') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Contoh: <code class="text-secondary">-5.1477</code></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Longitude (Garis Bujur)</label>
+                        <input type="text" class="form-control form-control-dark font-monospace" name="GEOFENCE_LNG" value="{{ settings_dict.get('GEOFENCE_LNG', '119.4327') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Contoh: <code class="text-secondary">119.4327</code></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Radius Geofence</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control form-control-dark" name="GEOFENCE_RADIUS" value="{{ settings_dict.get('GEOFENCE_RADIUS', '100') }}" required>
+                            <span class="input-group-text bg-light text-secondary small">meter</span>
+                        </div>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Jarak maksimal ke kantor</span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Toleransi GPS Laptop</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control form-control-dark" name="MAX_GPS_ACCURACY" value="{{ settings_dict.get('MAX_GPS_ACCURACY', '250') }}" required>
+                            <span class="input-group-text bg-light text-secondary small">meter</span>
+                        </div>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Batas akurasi (250-500m)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: Jam Kerja -->
+            <div class="settings-card-item bg-white rounded-4 p-4 mb-4 border shadow-sm">
+                <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
+                    <div class="icon-box bg-warning bg-opacity-10 text-warning rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
+                        <i class="bi bi-clock-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1 text-dark">Konfigurasi Rentang Jam Absensi (WITA)</h6>
+                        <p class="text-secondary small mb-0">Atur jadwal waktu buka, batas akhir tepat waktu, dan penutupan sesi absensi harian.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Mulai Absen Masuk</label>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_START" value="{{ settings_dict.get('CHECKIN_START', '07:00') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Buka sesi pagi</span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Batas Akhir Masuk</label>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_END" value="{{ settings_dict.get('CHECKIN_END', '09:00') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Batas tepat waktu</span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Mulai Absen Pulang</label>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKOUT_START" value="{{ settings_dict.get('CHECKOUT_START', '16:00') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Buka sesi sore</span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Batas Akhir Pulang</label>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKOUT_END" value="{{ settings_dict.get('CHECKOUT_END', '18:00') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Penutupan sistem harian</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: Button Save -->
+            <div class="settings-card-item bg-white rounded-4 p-4 border shadow-sm d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                <div class="d-flex align-items-center gap-2 text-secondary small">
+                    <i class="bi bi-info-circle-fill text-primary fs-6"></i>
+                    <span>Semua perubahan konfigurasi langsung berlaku (*runtime*) tanpa perlu restart server.</span>
+                </div>
+                <button type="submit" class="btn btn-primary rounded-pill px-4 py-2.5 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2 flex-shrink-0" id="btnSaveSettings">
+                    <i class="bi bi-save me-1"></i><span>Simpan Perubahan Konfigurasi</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TAB 4: AUDIT LOGS -->
+    <div class="tab-pane fade" id="tab-logs" role="tabpanel">
+        <div class="glass-card p-4">
+            <h6 class="fw-bold mb-3 text-primary"><i class="bi bi-journal-text me-2"></i>Riwayat Aktivitas & Keamanan Sistem</h6>
+            <div class="table-responsive custom-table-scroll">
+                <table class="table table-dark-custom">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Waktu (WITA)</th>
+                            <th>User</th>
+                            <th>Aksi</th>
+                            <th>Detail Informasi</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in logs %}
+                        <tr>
+                            <td class="text-secondary fw-semibold">{{ loop.index }}</td>
+                            <td class="text-nowrap small fw-medium text-dark">{{ format_date(l.created_at) }} <span class="text-muted ms-1">{{ format_time(l.created_at) }}</span></td>
+                            <td class="fw-bold text-primary">{{ l.user.username if l.user else 'System' }}</td>
+                            <td>
+                                {% if l.action == 'login' %}
+                                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-2.5 py-1.5"><i class="bi bi-box-arrow-in-right me-1"></i>Login</span>
+                                {% elif l.action == 'logout' %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary border-opacity-25 px-2.5 py-1.5"><i class="bi bi-box-arrow-left me-1"></i>Logout</span>
+                                {% elif l.action == 'check_in' %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 px-2.5 py-1.5"><i class="bi bi-geo-alt-fill me-1"></i>Absen Masuk</span>
+                                {% elif l.action == 'check_out' %}
+                                    <span class="badge bg-info-subtle text-info border border-info border-opacity-25 px-2.5 py-1.5"><i class="bi bi-clock-history me-1"></i>Absen Pulang</span>
+                                {% elif l.action == 'update_setting' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 px-2.5 py-1.5"><i class="bi bi-gear-fill me-1"></i>Konfigurasi</span>
+                                {% elif l.action == 'bulk_import_excel' %}
+                                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-2.5 py-1.5"><i class="bi bi-file-earmark-excel me-1"></i>Import Excel</span>
+                                {% elif l.action == 'add_user' %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 px-2.5 py-1.5"><i class="bi bi-person-plus-fill me-1"></i>Tambah User</span>
+                                {% elif l.action == 'delete_user' %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 px-2.5 py-1.5"><i class="bi bi-trash-fill me-1"></i>Hapus User</span>
+                                {% elif l.action == 'toggle_status' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 px-2.5 py-1.5"><i class="bi bi-toggle-on me-1"></i>Status User</span>
+                                {% elif l.action == 'reset_password' %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 px-2.5 py-1.5"><i class="bi bi-key-fill me-1"></i>Reset Password</span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary border-opacity-25 px-2.5 py-1.5">{{ l.action }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-dark small">{{ l.detail or '-' }}</td>
+                            <td><code class="text-primary fw-bold px-2 py-1 bg-light rounded border font-monospace" style="font-size: 0.78rem;">{{ l.ip_address or '-' }}</code></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-secondary py-4">Belum ada catatan aktivitas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Import Excel -->
+<div class="modal fade" id="modalImportExcel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card border-0">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold text-primary"><i class="bi bi-file-earmark-spreadsheet text-success me-2"></i>Bulk Import Mahasiswa via Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formImportExcel" onsubmit="importExcel(event)">
+                <div class="modal-body p-4">
+                    <p class="text-secondary small mb-3">Pilih file Excel (<code class="text-primary">.xlsx</code>) dengan kolom header: <strong>NIM, Nama Lengkap, Email, Kampus, No HP</strong>.</p>
+                    <div class="mb-3">
+                        <input type="file" class="form-control form-control-dark" id="excelFile" name="file" accept=".xlsx, .xls" required>
+                    </div>
+                    <div id="importResult" class="d-none"></div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-success btn-sm px-4" id="btnSubmitImport">
+                        <i class="bi bi-upload me-1"></i>Mulai Import Sekarang
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add User Manual -->
+<div class="modal fade" id="modalAddUser" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card border-0">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold text-primary" id="modalAddTitle">Tambah Akun Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formAddUser" onsubmit="addUser(event)">
+                <input type="hidden" id="addRole" name="role" value="mahasiswa">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6" id="fieldNimGroup">
+                            <label class="form-label text-secondary small">NIM (Nomor Induk)</label>
+                            <input type="text" class="form-control form-control-dark" name="nim" id="addNim" placeholder="Contoh: 2022001">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">Username (Untuk Login)</label>
+                            <input type="text" class="form-control form-control-dark" name="username" required placeholder="Contoh: budis">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-secondary small">Nama Lengkap</label>
+                            <input type="text" class="form-control form-control-dark" name="full_name" required placeholder="Contoh: Budi Santoso">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">Email</label>
+                            <input type="email" class="form-control form-control-dark" name="email" required placeholder="budi@example.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">Password</label>
+                            <input type="text" class="form-control form-control-dark" name="password" id="addPassword" value="mhs123" required>
+                        </div>
+                        <div class="col-md-6" id="fieldInstansiGroup">
+                            <label class="form-label text-secondary small">Kampus/Instansi Asal</label>
+                            <input type="text" class="form-control form-control-dark" name="instansi" placeholder="Contoh: Universitas Hasanuddin">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">No. WhatsApp</label>
+                            <input type="text" class="form-control form-control-dark" name="phone" placeholder="08123456789">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-4" id="btnSubmitAdd">Simpan Akun</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit User -->
+<div class="modal fade" id="modalEditUser" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card border-0">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold text-primary" id="modalEditTitle"><i class="bi bi-pencil-square text-primary me-2"></i>Edit Profil User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEditUser" onsubmit="submitEditUser(event)">
+                <input type="hidden" id="editUserId" name="user_id">
+                <input type="hidden" id="editRole" name="role">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6" id="editNimGroup">
+                            <label class="form-label text-secondary small">NIM (Nomor Induk)</label>
+                            <input type="text" class="form-control form-control-dark" name="nim" id="editNim">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">Username</label>
+                            <input type="text" class="form-control form-control-dark" name="username" id="editUsername" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-secondary small">Nama Lengkap</label>
+                            <input type="text" class="form-control form-control-dark" name="full_name" id="editFullName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">Email</label>
+                            <input type="email" class="form-control form-control-dark" name="email" id="editEmail" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary small">No. WhatsApp</label>
+                            <input type="text" class="form-control form-control-dark" name="phone" id="editPhone">
+                        </div>
+                        <div class="col-12" id="editInstansiGroup">
+                            <label class="form-label text-secondary small">Kampus/Instansi Asal</label>
+                            <input type="text" class="form-control form-control-dark" name="instansi" id="editInstansi">
+                        </div>
+                        <div class="col-12 border-top pt-3 mt-3">
+                            <label class="form-label text-warning small"><i class="bi bi-key me-1"></i>Ubah Password (Opsional)</label>
+                            <input type="text" class="form-control form-control-dark" name="password" id="editPassword" placeholder="Kosongkan jika tidak ingin mengubah password">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-4" id="btnSubmitEdit">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Get CSRF token for AJAX requests
+const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+// Safe JSON response handler
+async function handleApiResponse(response) {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || `Server error (${response.status})`);
+        }
+        return data;
+    } else {
+        const text = await response.text();
+        throw new Error(`Kesalahan server (HTTP ${response.status}). Periksa konsol / log server.`);
+    }
+}
+
+// Live Search for Mahasiswa Table
+document.getElementById('searchMhs')?.addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#tableMahasiswa tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+
+// Setup Add Modal based on role
+function setupAddModal(role) {
+    document.getElementById('addRole').value = role;
+    const title = role === 'mahasiswa' ? 'Tambah Mahasiswa Magang Baru' : 'Tambah Dosen Pembimbing Baru';
+    document.getElementById('modalAddTitle').textContent = title;
+    document.getElementById('addPassword').value = role === 'mahasiswa' ? 'mhs123' : 'dosen123';
+
+    if (role === 'mahasiswa') {
+        document.getElementById('fieldNimGroup').style.display = '';
+        document.getElementById('fieldInstansiGroup').style.display = '';
+    } else {
+        document.getElementById('fieldNimGroup').style.display = 'none';
+        document.getElementById('fieldInstansiGroup').style.display = 'none';
+    }
+}
+
+// Open Edit Modal and fill data
+function openEditModal(userId, role, nim, username, fullName, email, instansi, phone) {
+    document.getElementById('editUserId').value = userId;
+    document.getElementById('editRole').value = role;
+    document.getElementById('editNim').value = nim || '';
+    document.getElementById('editUsername').value = username || '';
+    document.getElementById('editFullName').value = fullName || '';
+    document.getElementById('editEmail').value = email || '';
+    document.getElementById('editInstansi').value = instansi || '';
+    document.getElementById('editPhone').value = phone || '';
+    document.getElementById('editPassword').value = '';
+
+    if (role === 'mahasiswa') {
+        document.getElementById('editNimGroup').style.display = '';
+        document.getElementById('editInstansiGroup').style.display = '';
+        document.getElementById('modalEditTitle').innerHTML = '<i class="bi bi-pencil-square text-primary me-2"></i>Edit Data Mahasiswa Magang';
+    } else {
+        document.getElementById('editNimGroup').style.display = 'none';
+        document.getElementById('editInstansiGroup').style.display = 'none';
+        document.getElementById('modalEditTitle').innerHTML = '<i class="bi bi-pencil-square text-primary me-2"></i>Edit Data Dosen Pembimbing';
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('modalEditUser'));
+    modal.show();
+}
+
+// Submit Edit User via AJAX
+async function submitEditUser(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitEdit');
+    const form = document.getElementById('formEditUser');
+    const userId = document.getElementById('editUserId').value;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch(`/api/admin/users/${userId}/update`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await handleApiResponse(response);
+        alert(data.message);
+        location.reload();
+    } catch (err) {
+        alert('Gagal memperbarui data: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Simpan Perubahan';
+    }
+}
+
+// Bulk Import Excel via AJAX
+async function importExcel(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitImport');
+    const resultBox = document.getElementById('importResult');
+    const fileInput = document.getElementById('excelFile');
+
+    if (!fileInput.files[0]) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses Excel...';
+    resultBox.className = 'd-none';
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+        const response = await fetch('{{ url_for("api.import_excel_users") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: formData
+        });
+        const data = await handleApiResponse(response);
+        resultBox.className = 'alert alert-success mt-3 small mb-0';
+        resultBox.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> ${data.message}`;
+        setTimeout(() => location.reload(), 1500);
+    } catch (err) {
+        resultBox.className = 'alert alert-danger mt-3 small mb-0';
+        resultBox.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-1"></i> ${err.message}`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-upload me-1"></i>Mulai Import Sekarang';
+    }
+}
+
+// Add User Manual via AJAX
+async function addUser(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitAdd');
+    const form = document.getElementById('formAddUser');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('{{ url_for("api.add_user_manual") }}', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await handleApiResponse(response);
+        alert(data.message);
+        location.reload();
+    } catch (err) {
+        alert('Gagal menambahkan akun: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Simpan Akun';
+    }
+}
+
+// Reset Password via AJAX
+async function resetPassword(userId, username, defaultPw) {
+    if (!confirm(`Apakah Anda yakin ingin mereset password akun (${username}) kembali ke default (${defaultPw})?`)) return;
+
+    try {
+        const response = await fetch(`/api/admin/users/${userId}/reset-password`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({ password: defaultPw })
+        });
+        const data = await handleApiResponse(response);
+        alert(data.message);
+    } catch (err) {
+        alert('Gagal mereset password: ' + err.message);
+    }
+}
+
+// Toggle Status via AJAX
+async function toggleStatus(userId, username) {
+    if (!confirm(`Ubah status aktif/nonaktif akun (${username})?`)) return;
+
+    try {
+        const response = await fetch(`/api/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            }
+        });
+        const data = await handleApiResponse(response);
+        const badge = document.getElementById(`status-badge-${userId}`);
+        if (badge) {
+            badge.className = `badge ${data.is_active ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`;
+            badge.textContent = data.is_active ? 'Aktif' : 'Nonaktif';
+        }
+    } catch (err) {
+        alert('Gagal mengubah status: ' + err.message);
+    }
+}
+
+// Delete User via AJAX
+async function deleteUser(userId, username) {
+    if (!confirm(`PERINGATAN KRITIS: Apakah Anda yakin ingin menghapus akun (${username})? Seluruh data absensinya juga akan terhapus permanen!`)) return;
+
+    try {
+        const response = await fetch(`/api/admin/users/${userId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            }
+        });
+        const data = await handleApiResponse(response);
+        const row = document.getElementById(`user-row-${userId}`);
+        if (row) row.remove();
+        alert(data.message);
+    } catch (err) {
+        alert('Gagal menghapus pengguna: ' + err.message);
+    }
+}
+
+// Update Settings via AJAX
+async function updateSettings(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSaveSettings');
+    const form = document.getElementById('formSettings');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan Pengaturan...';
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('{{ url_for("api.admin_update_settings") }}', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await handleApiResponse(response);
+        alert(data.message);
+    } catch (err) {
+        alert('Gagal menyimpan konfigurasi: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-save me-2"></i>Simpan Perubahan Konfigurasi';
+    }
+}
+
+
+async function useMyCurrentLocation(btn) {
+    if (!navigator.geolocation) {
+        alert('Browser Anda tidak mendukung sensor GPS/Geolocator.');
+        return;
+    }
+    const origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Mendeteksi Koordinat GPS Ruangan...';
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const lat = pos.coords.latitude.toFixed(6);
+            const lng = pos.coords.longitude.toFixed(6);
+            document.querySelector('input[name="GEOFENCE_LAT"]').value = lat;
+            document.querySelector('input[name="GEOFENCE_LNG"]').value = lng;
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+            alert(`Berhasil mendeteksi koordinat GPS ruangan ini!\n\nLatitude: ${lat}\nLongitude: ${lng}\n\nSilakan klik tombol "Simpan Perubahan Konfigurasi" di bawah agar mahasiswa di ruangan ini jaraknya menjadi 0 meter!`);
+        },
+        (err) => {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+            alert('Gagal mendeteksi lokasi GPS: ' + err.message + '\n\nPastikan GPS aktif dan izin lokasi telah diberikan.');
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+}
+</script>
+{% endblock %}
