@@ -80,6 +80,8 @@ def clean_time_string(time_str, default='07:00'):
     try:
         hour = int(parts[0][:2]) if len(parts) > 0 else 0
         minute = int(parts[1][:2]) if len(parts) > 1 else 0
+        if hour == 24:
+            return '23:59'
         hour = max(0, min(23, hour))
         minute = max(0, min(59, minute))
         return f'{hour:02d}:{minute:02d}'
