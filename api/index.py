@@ -17,7 +17,14 @@ def ensure_db_initialized():
     if not _db_initialized:
         try:
             db.create_all()
+            from app.models import User
+            if not User.query.first():
+                from seed import seed
+                seed()
+                print("[Info] Auto-seed Vercel berhasil dijalankan (admin, dosen1, mhs1 siap)!")
             _db_initialized = True
         except Exception as e:
-            print(f"[Warning] Gagal inisialisasi tabel database saat request Vercel: {e}")
+            db.session.rollback()
+            print(f"[Warning] Gagal inisialisasi / auto-seed tabel database saat request Vercel: {e}")
+
 
