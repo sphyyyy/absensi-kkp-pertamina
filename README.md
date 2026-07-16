@@ -81,7 +81,6 @@ Berikut adalah daftar akun yang otomatis dibuat setelah menjalankan `seed.py` at
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin` | `admin123` | Akses penuh manajemen sistem, geofence, impor Excel, & log audit |
 | **Dosen** | `dosen1` / `19850101...` | `dosen123` | Dosen pembimbing magang (`Dr. Ahmad Fauzi, M.Kom`) |
-| **Mahasiswa** | `2361008` | `mhs123` | Akun utama mahasiswa KKP (`sphyyy`) |
 | **Mahasiswa** | `mhs1` (`2021001`) | `mhs123` | Akun mahasiswa tes (`Andi Pratama`) |
 | **Mahasiswa** | `mhs2` (`2021002`) | `mhs123` | Akun mahasiswa tes (`Budi Santoso`) |
 | **Mahasiswa** | `mhs3` (`2021003`) | `mhs123` | Akun mahasiswa tes (`Citra Dewi`) |
@@ -142,11 +141,3 @@ Untuk menjalankan pengujian:
 python test_maintenance.py
 ```
 > *Hasil yang diharapkan*: `TOTAL: 47 tes | PASS: 47 | FAIL: 0 | SKOR: 100.0%`
-
----
-
-## 📜 Lisensi & Atribusi
-
-Dibuat sebagai Proyek Kuliah Kerja Praktik (KKP) oleh **sphyyy (`2361008`)**  
-**PT. Pertamina Patra Niaga Regional Sulawesi**  
-*Hak Cipta Dilindungi — Penggunaan Internal.*
