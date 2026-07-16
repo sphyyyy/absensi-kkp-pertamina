@@ -1,4 +1,4 @@
-from datetime import datetime
+from typing import Any
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -8,6 +8,9 @@ from app.utils.helpers import now_wita
 
 class User(UserMixin, db.Model):
     """User model for mahasiswa, dosen, and admin."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
     __tablename__ = 'users'
 

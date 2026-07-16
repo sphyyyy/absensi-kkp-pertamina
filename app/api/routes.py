@@ -1,7 +1,7 @@
 import io
 import openpyxl
 from datetime import datetime
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, jsonify, request, send_file, current_app
 from flask_login import login_required, current_user
 
 from app.extensions import db
@@ -12,7 +12,7 @@ from app.services.auth_service import (
     toggle_user_status, delete_user, update_user_profile
 )
 from app.utils.decorators import dosen_required, admin_required
-from app.utils.helpers import format_time, format_date
+from app.utils.helpers import format_time, format_date, clean_time_string
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -38,8 +38,8 @@ def get_attendance():
         query = query.filter(Attendance.attendance_date <= end)
     if search:
         query = query.filter(
-            User.full_name.ilike(f'%{search}%') |
-            User.nim.ilike(f'%{search}%')
+            User.full_name.ilike(f'%{search}%')
+            | User.nim.ilike(f'%{search}%')
         )
 
     records = query.order_by(
@@ -356,15 +356,28 @@ def admin_update_settings():
         'CHECKIN_START', 'CHECKIN_END', 'CHECKOUT_START', 'CHECKOUT_END',
         'ENABLE_WIFI_VALIDATION', 'OFFICE_WIFI_IP'
     ]
+    time_keys = {'CHECKIN_START', 'CHECKIN_END', 'CHECKOUT_START', 'CHECKOUT_END'}
 
     updated_count = 0
     for k in allowed_keys:
         if k in data and data[k] is not None:
-            Setting.set(k, str(data[k]).strip())
+            val = str(data[k]).strip()
+            if k in time_keys:
+                val = clean_time_string(val)
+            Setting.set(k, val)
+            try:
+                current_app.config[k] = val
+            except Exception:
+                pass
             updated_count += 1
 
     if updated_count == 0:
         return jsonify({'error': 'Tidak ada pengaturan yang dikirim.'}), 400
+
+    try:
+        db.session.expire_all()
+    except Exception:
+        pass
 
     Log.log(
         action='update_setting',
@@ -373,4 +386,4 @@ def admin_update_settings():
         ip_address=request.remote_addr,
     )
 
-    return jsonify({'success': True, 'message': 'Pengaturan sistem berhasil diperbarui.'})
+    return jsonify({'success': True, 'message': 'Pengaturan sistem berhasil diperbarui dan langsung aktif!'})

@@ -1,4 +1,4 @@
-from app.models import User, Log, Attendance
+from app.models import User, Attendance
 from app.extensions import db
 import openpyxl
 

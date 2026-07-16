@@ -88,19 +88,19 @@ def seed():
 
         # ── Default Settings ──
         settings = [
-            Setting(key='geofence_lat', value='-5.1477',
+            Setting(key='GEOFENCE_LAT', value='-5.1477',
                     description='Latitude kantor Pertamina'),
-            Setting(key='geofence_lng', value='119.4327',
+            Setting(key='GEOFENCE_LNG', value='119.4327',
                     description='Longitude kantor Pertamina'),
-            Setting(key='geofence_radius', value='100',
+            Setting(key='GEOFENCE_RADIUS', value='100',
                     description='Radius geofence (meter)'),
-            Setting(key='checkin_start', value='07:00',
+            Setting(key='CHECKIN_START', value='07:00',
                     description='Jam mulai absen masuk'),
-            Setting(key='checkin_end', value='09:00',
+            Setting(key='CHECKIN_END', value='09:00',
                     description='Jam akhir absen masuk'),
-            Setting(key='checkout_start', value='16:00',
+            Setting(key='CHECKOUT_START', value='16:00',
                     description='Jam mulai absen pulang'),
-            Setting(key='checkout_end', value='18:00',
+            Setting(key='CHECKOUT_END', value='18:00',
                     description='Jam akhir absen pulang'),
         ]
 
@@ -113,11 +113,11 @@ def seed():
         print()
         print('Akun yang dibuat:')
         print('-' * 40)
-        print(f'  Admin    : admin / admin123')
-        print(f'  Dosen    : dosen1 / dosen123')
-        print(f'  Mahasiswa: mhs1 / mhs123')
-        print(f'  Mahasiswa: mhs2 / mhs123')
-        print(f'  Mahasiswa: mhs3 / mhs123')
+        print('  Admin    : admin / admin123')
+        print('  Dosen    : dosen1 / dosen123')
+        print('  Mahasiswa: mhs1 / mhs123')
+        print('  Mahasiswa: mhs2 / mhs123')
+        print('  Mahasiswa: mhs3 / mhs123')
         print('-' * 40)
 
 

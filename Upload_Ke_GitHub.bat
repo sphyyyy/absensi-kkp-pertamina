@@ -8,8 +8,8 @@ echo.
 cd /d "%~dp0"
 
 echo [1/3] Memeriksa konfigurasi dan status Git di folder ini...
-git config --global user.email "odieflomotobing@gmail.com" >nul 2>&1
-git config --global user.name "Odie Flo Motobing" >nul 2>&1
+git config --global user.email "sphyyy@gmail.com" >nul 2>&1
+git config --global user.name "sphyyy" >nul 2>&1
 
 if not exist ".git" (
     echo [*] Inisialisasi Git repository baru...

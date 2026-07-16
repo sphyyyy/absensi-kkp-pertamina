@@ -1,9 +1,13 @@
+from typing import Any
 from app.extensions import db
 from app.utils.helpers import now_wita
 
 
 class Log(db.Model):
     """Activity audit log for security tracking."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
     __tablename__ = 'logs'
 

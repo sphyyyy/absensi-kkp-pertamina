@@ -738,6 +738,23 @@ async function updateSettings(e) {
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
 
+    // Normalize time inputs if user typed 23.00 or 23.000 instead of 23:00
+    ['CHECKIN_START', 'CHECKIN_END', 'CHECKOUT_START', 'CHECKOUT_END'].forEach(key => {
+        if (payload[key]) {
+            let val = payload[key].trim().replace(/\./g, ':').replace(/,/g, ':');
+            const parts = val.split(':');
+            if (parts.length >= 2) {
+                let h = parseInt(parts[0].substring(0, 2), 10) || 0;
+                let m = parseInt(parts[1].substring(0, 2), 10) || 0;
+                h = Math.max(0, Math.min(23, h));
+                m = Math.max(0, Math.min(59, m));
+                payload[key] = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                const inputEl = form.querySelector(`[name="${key}"]`);
+                if (inputEl) inputEl.value = payload[key];
+            }
+        }
+    });
+
     try {
         const response = await fetch('{{ url_for("api.admin_update_settings") }}', {
             method: 'POST',
@@ -748,12 +765,43 @@ async function updateSettings(e) {
             body: JSON.stringify(payload)
         });
         const data = await handleApiResponse(response);
+        
+        let alertBox = document.getElementById('settingsAlertBox');
+        if (!alertBox) {
+            alertBox = document.createElement('div');
+            alertBox.id = 'settingsAlertBox';
+            form.insertBefore(alertBox, form.lastElementChild);
+        }
+        alertBox.innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm d-flex align-items-center gap-2 mb-3" role="alert">
+                <i class="bi bi-check-circle-fill fs-5 flex-shrink-0"></i>
+                <div>
+                    <strong>Berhasil!</strong> ${data.message} Konfigurasi langsung aktif dan tersimpan di database.
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
         alert(data.message);
     } catch (err) {
+        let alertBox = document.getElementById('settingsAlertBox');
+        if (!alertBox) {
+            alertBox = document.createElement('div');
+            alertBox.id = 'settingsAlertBox';
+            form.insertBefore(alertBox, form.lastElementChild);
+        }
+        alertBox.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm d-flex align-items-center gap-2 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>
+                <div>
+                    <strong>Gagal!</strong> ${err.message}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
         alert('Gagal menyimpan konfigurasi: ' + err.message);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-save me-2"></i>Simpan Perubahan Konfigurasi';
+        btn.innerHTML = '<i class="bi bi-save me-1"></i><span>Simpan Perubahan Konfigurasi</span>';
     }
 }
 

@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import current_app, request as flask_request
 
@@ -13,7 +13,7 @@ from app.utils.constants import (
     TYPE_CHECKIN, TYPE_CHECKOUT,
     ERR_OUTSIDE_GEOFENCE, ERR_OUTSIDE_TIME_WINDOW,
     ERR_ALREADY_CHECKED_IN, ERR_ALREADY_CHECKED_OUT,
-    ERR_NOT_CHECKED_IN, ERR_INVALID_PHOTO, ERR_PHOTO_REQUIRED,
+    ERR_NOT_CHECKED_IN,
     ERR_GPS_REQUIRED, ERR_GPS_LOW_ACCURACY,
     MSG_CHECKIN_SUCCESS, MSG_CHECKOUT_SUCCESS,
     MAX_GPS_ACCURACY_METERS,
@@ -34,6 +34,10 @@ def _validate_time_window(attendance_type):
     Returns:
         tuple: (is_valid: bool, error_message: str or None)
     """
+    try:
+        db.session.expire_all()
+    except Exception:
+        pass
     now = now_wita().time()
 
     if attendance_type == TYPE_CHECKIN:
@@ -57,12 +61,16 @@ def _is_late(attendance_type):
     """Determine if the check-in is late (after CHECKIN_START + 30 min buffer)."""
     if attendance_type != TYPE_CHECKIN:
         return False
+    try:
+        db.session.expire_all()
+    except Exception:
+        pass
     now = now_wita().time()
     start = parse_time_string(Setting.get('CHECKIN_START', current_app.config['CHECKIN_START']))
     # Consider late if checked in after 30 minutes past start
     late_threshold = datetime.combine(
         today_wita(), start
-    ).replace(minute=start.minute + 30)
+    ) + timedelta(minutes=30)
     return now > late_threshold.time()
 
 

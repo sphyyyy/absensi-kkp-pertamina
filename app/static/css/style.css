@@ -356,6 +356,26 @@ body {
     transform: scale(1.07);
 }
 
+.hero-slide-1 {
+    background-image: url('../img/login/hero_1.jpg');
+}
+
+.hero-slide-2 {
+    background-image: url('../img/login/hero_2.png');
+}
+
+.hero-slide-3 {
+    background-image: url('../img/login/hero_3.png');
+}
+
+.hero-slide-4 {
+    background-image: url('../img/login/hero_4.png');
+}
+
+.hero-slide-5 {
+    background-image: url('../img/login/hero_5.png');
+}
+
 
 
 /* Carousel Indicators (Number Pills) */

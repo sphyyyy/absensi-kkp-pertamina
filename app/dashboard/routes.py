@@ -8,7 +8,7 @@ from app.services.attendance_service import (
 )
 from app.utils.decorators import mahasiswa_required, dosen_required, admin_required
 from app.utils.helpers import (
-    greeting, today_wita, now_wita, format_date, format_time
+    greeting, today_wita, format_date, format_time
 )
 from app.utils.constants import STATUS_HADIR, STATUS_TERLAMBAT
 
@@ -110,8 +110,8 @@ def dosen_dashboard():
 
     if search:
         query = query.filter(
-            User.full_name.ilike(f'%{search}%') |
-            User.nim.ilike(f'%{search}%')
+            User.full_name.ilike(f'%{search}%')
+            | User.nim.ilike(f'%{search}%')
         )
 
     pagination = query.order_by(
@@ -157,7 +157,7 @@ def admin_dashboard():
     mahasiswa_list = User.query.filter_by(role='mahasiswa').order_by(User.full_name).all()
     dosen_list = User.query.filter_by(role='dosen').order_by(User.full_name).all()
     settings = Setting.query.order_by(Setting.key).all()
-    settings_dict = {s.key: s.value for s in settings}
+    settings_dict = {s.key.upper(): s.value for s in settings}
     logs = Log.query.order_by(Log.created_at.desc()).limit(100).all()
 
     return render_template(

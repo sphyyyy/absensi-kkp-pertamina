@@ -1,5 +1,4 @@
 import os
-from datetime import date
 
 from flask import current_app
 from reportlab.lib import colors
@@ -45,8 +44,8 @@ def generate_pdf_report(start_date, end_date, title=None):
         title = f'Laporan Absensi KKP — {format_date(start_date)} s/d {format_date(end_date)}'
 
     doc = SimpleDocTemplate(filepath, pagesize=A4,
-                            leftMargin=15*mm, rightMargin=15*mm,
-                            topMargin=20*mm, bottomMargin=20*mm)
+                            leftMargin=15 * mm, rightMargin=15 * mm,
+                            topMargin=20 * mm, bottomMargin=20 * mm)
 
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(

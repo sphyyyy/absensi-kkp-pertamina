@@ -6,7 +6,6 @@ Sistem absensi digital berbasis web untuk mahasiswa magang (Kuliah Kerja Praktik
 
 - 📱 **Mobile-First** — Dioptimalkan untuk akses via smartphone
 - 📍 **GPS Geofence** — Validasi lokasi otomatis dengan Haversine formula
-- 📸 **Foto Selfie** — Wajib selfie saat absensi
 - ⏰ **Window Waktu** — Absensi hanya bisa dilakukan pada jam yang ditentukan
 - 📊 **Dashboard Dosen** — Monitoring kehadiran real-time
 - 📄 **Export Laporan** — PDF & Excel report generation

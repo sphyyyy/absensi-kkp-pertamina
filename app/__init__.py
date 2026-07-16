@@ -46,6 +46,13 @@ def create_app(config_name=None):
     # Ensure required directories exist
     _ensure_directories(app)
 
+    with app.app_context():
+        try:
+            from app.models import Setting
+            Setting.normalize_keys()
+        except Exception:
+            pass
+
     return app
 
 
