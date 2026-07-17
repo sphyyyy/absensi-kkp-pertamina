@@ -1177,6 +1177,58 @@ body {
     border: 1px solid var(--border);
 }
 
+/* Modern Audit Log & Separate Header Table Container (Mencegah scrollbar tembus header) */
+.audit-log-container {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: #FFFFFF;
+    overflow: hidden;
+}
+
+.audit-table-header {
+    background: #003D7A !important;
+    border-bottom: 2px solid var(--accent) !important;
+    overflow-x: hidden;
+    /* Memberi kompensasi ruang 6px di sebelah kanan jika tabel body di bawahnya memiliki scrollbar vertikal */
+    padding-right: 6px;
+}
+
+.audit-table-header .table-dark-custom thead th {
+    background: #003D7A !important;
+    color: #FFFFFF !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    padding: 0.9rem 0.75rem;
+    position: static; /* Karena header sudah berada di luar scroll container, tidak perlu sticky */
+}
+
+.custom-table-scroll-body {
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: auto;
+    background: #FFFFFF;
+    will-change: scroll-position;
+}
+
+.custom-table-scroll-body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-table-scroll-body::-webkit-scrollbar-track {
+    background: #F8FAFC;
+    border-left: 1px solid var(--border);
+}
+
+.custom-table-scroll-body::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 4px;
+}
+
+.custom-table-scroll-body::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+
 /* Table */
 .table-dark-custom {
     color: var(--text-primary) !important;
