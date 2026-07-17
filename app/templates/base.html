@@ -37,14 +37,6 @@
 
             <!-- Bagian Kanan Navbar: Langsung Logo Profil TANPA TOMBOL 3 GARIS (HAMBURGER DROPDOWN) SAMA SEKALI -->
             <div class="d-flex align-items-center gap-2 ms-auto">
-                {% if current_user.is_mahasiswa %}
-                <div class="d-none d-lg-flex align-items-center gap-2">
-                    <a class="nav-link text-white fw-semibold px-3 py-1 rounded-pill hover-bg-light" href="{{ url_for('dashboard.mahasiswa_dashboard') }}">
-                        <i class="bi bi-house-door me-1"></i> Dashboard
-                    </a>
-                </div>
-                {% endif %}
-
                 <!-- LOGO PROFIL (Avatar Lingkaran yang Langsung Terlihat di Semua Layar Mobile & Desktop - SATU LINGKARAN BERSIH TANPA BENTUK OVAL/LAPISAN GANDA) -->
                 <a class="nav-link p-0 d-flex align-items-center justify-content-center rounded-circle shadow-sm border border-2 border-white flex-shrink-0" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modalUserProfile" title="Lihat Profil & Fungsi Singkat" style="width: 44px; height: 44px; min-width: 44px; min-height: 44px; background: var(--gradient-primary); color: #ffffff !important; font-size: 1.45rem; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden; border-radius: 50% !important;">
                     <i class="bi bi-person-fill" style="line-height: 1;"></i>
