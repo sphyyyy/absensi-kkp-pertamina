@@ -518,6 +518,19 @@ body {
     box-shadow: 0 3px 12px rgba(0, 61, 122, 0.3);
 }
 
+/* Universal Hover Lift (Levitate) Effect for All Interactive Buttons Across the Application */
+.btn:not(:disabled):not(.disabled) {
+    transition: var(--transition);
+}
+
+.btn:not(:disabled):not(.disabled):hover {
+    transform: translateY(-2px);
+}
+
+.btn:not(:disabled):not(.disabled):active {
+    transform: translateY(0);
+}
+
 /* ========================================================
    HYPER-RESPONSIVE MOBILE RULES (@media max-width: 991.98px)
    ======================================================== */
@@ -1310,25 +1323,27 @@ canvas {
    PREMIUM ESTHETIC PROFILE LOGOUT BTN
    =================================== */
 .profile-logout-btn {
-    background: linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #991B1B 100%) !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35) !important;
+    background: #FFF5F5 !important;
+    color: #991B1B !important;
+    border: 1px solid #FECACA !important;
+    box-shadow: 0 2px 6px rgba(153, 27, 27, 0.08) !important;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     letter-spacing: 0.3px;
-    font-size: 0.98rem;
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .profile-logout-btn:hover {
-    background: linear-gradient(135deg, #F87171 0%, #EF4444 50%, #DC2626 100%) !important;
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.55) !important;
+    background: #991B1B !important;
+    color: #FFFFFF !important;
+    border-color: #991B1B !important;
+    box-shadow: 0 6px 18px rgba(153, 27, 27, 0.22) !important;
     transform: translateY(-2px);
-    color: #ffffff !important;
 }
 
 .profile-logout-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.4) !important;
+    box-shadow: 0 2px 8px rgba(153, 27, 27, 0.15) !important;
 }
 
 /* ===================================
