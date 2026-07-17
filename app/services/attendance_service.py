@@ -42,33 +42,23 @@ def _validate_time_window(attendance_type):
 
     if attendance_type == TYPE_CHECKIN:
         start = parse_time_string(Setting.get('CHECKIN_START', current_app.config['CHECKIN_START']))
-        end = parse_time_string(Setting.get('CHECKIN_END', current_app.config['CHECKIN_END']))
+        # 1.B: Dilarang jika sebelum jam masuk (misal < 07:00). Tapi setelah/mulai jam masuk,
+        # mahasiswa bebas absen masuk tanpa pop-up larangan sampai akhir hari (23:59:59).
+        if now < start:
+            return False, (
+                f'{ERR_OUTSIDE_TIME_WINDOW} '
+                f'Jam absen masuk baru dimulai pukul {start.strftime("%H:%M")}.'
+            )
+        return True, None
     else:
         start = parse_time_string(Setting.get('CHECKOUT_START', current_app.config['CHECKOUT_START']))
-        end = parse_time_string(Setting.get('CHECKOUT_END', current_app.config['CHECKOUT_END']))
-
-    # Smart Handling: If end is 00:00 (e.g., "07:00 - 00:00"), treat end as midnight 23:59:59
-    if end == time(0, 0) and start != time(0, 0):
-        end = time(23, 59, 59)
-
-    # Check if now falls within the start-end window (supporting both daytime and overnight windows)
-    is_valid = False
-    if start <= end:
-        # Normal daytime shift (e.g., 07:00 to 23:00 or 07:00 to 23:59:59)
-        is_valid = (start <= now <= end)
-    else:
-        # Overnight shift across midnight (e.g., 22:00 to 06:00)
-        is_valid = (now >= start or now <= end)
-
-    if is_valid:
+        # 2: Untuk absen pulang, batasnya sampai akhir/pergantian hari (23:59:59).
+        if now < start:
+            return False, (
+                f'{ERR_OUTSIDE_TIME_WINDOW} '
+                f'Jam absen pulang baru dimulai pukul {start.strftime("%H:%M")}.'
+            )
         return True, None
-
-    label = 'masuk' if attendance_type == TYPE_CHECKIN else 'pulang'
-    end_display = '24:00' if end == time(23, 59, 59) else end.strftime("%H:%M")
-    return False, (
-        f'{ERR_OUTSIDE_TIME_WINDOW} '
-        f'Jam absen {label}: {start.strftime("%H:%M")} - {end_display}.'
-    )
 
 
 def _is_late(attendance_type):

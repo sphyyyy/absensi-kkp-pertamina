@@ -111,7 +111,7 @@
                                         {% elif rec.status == 'terlambat' %}bg-warning-subtle text-warning
                                         {% elif rec.status == 'izin' %}bg-info-subtle text-info
                                         {% else %}bg-danger-subtle text-danger{% endif %}">
-                                        {{ rec.status | capitalize }}
+                                        {% if rec.status == 'hadir' %}Tepat Waktu{% else %}{{ rec.status | capitalize }}{% endif %}
                                     </span>
                                 </td>
                             </tr>

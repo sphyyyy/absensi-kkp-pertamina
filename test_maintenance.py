@@ -410,9 +410,13 @@ def run_all_tests():
         cleanup = User.query.filter(
             (User.username.like('test_%')) | (User.nim.in_(['7777001', '7777002', '8888001']))
         ).all()
-        for u in cleanup:
-            db.session.delete(u)
-        db.session.commit()
+        user_ids = [u.id for u in cleanup]
+        if user_ids:
+            Attendance.query.filter(Attendance.user_id.in_(user_ids)).delete(synchronize_session=False)
+            Log.query.filter(Log.user_id.in_(user_ids)).delete(synchronize_session=False)
+            for u in cleanup:
+                db.session.delete(u)
+            db.session.commit()
         print(f"  [*] Membersihkan {len(cleanup)} akun tes dari database.")
 
     # ====================================================

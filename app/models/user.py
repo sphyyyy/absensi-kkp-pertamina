@@ -28,8 +28,8 @@ class User(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, default=now_wita, onupdate=now_wita)
 
     # Relationships
-    attendances = db.relationship('Attendance', backref='user', lazy='dynamic')
-    logs = db.relationship('Log', backref='user', lazy='dynamic')
+    attendances = db.relationship('Attendance', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    logs = db.relationship('Log', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def set_password(self, password):
         """Hash and set the user password."""

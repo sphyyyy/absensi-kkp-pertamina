@@ -27,8 +27,8 @@
                 Pulang: {{ format_time(record.check_out_time) }}
             </p>
         </div>
-        <span class="badge bg-success-subtle text-success status-badge">
-            {{ record.status | capitalize }}
+        <span class="badge {% if record.status == 'hadir' %}bg-success-subtle text-success{% elif record.status == 'terlambat' %}bg-warning-subtle text-warning{% else %}bg-danger-subtle text-danger{% endif %} status-badge">
+            {% if record.status == 'hadir' %}Tepat Waktu{% else %}{{ record.status | capitalize }}{% endif %}
         </span>
 
         {% elif record and record.has_checked_in %}
@@ -43,9 +43,14 @@
                 Belum absen pulang
             </p>
         </div>
-        <span class="badge bg-warning-subtle text-warning status-badge">
-            Menunggu Pulang
-        </span>
+        <div class="d-flex flex-column align-items-end gap-1">
+            <span class="badge {% if record.status == 'hadir' %}bg-success-subtle text-success{% elif record.status == 'terlambat' %}bg-warning-subtle text-warning{% else %}bg-danger-subtle text-danger{% endif %} status-badge">
+                {% if record.status == 'hadir' %}Tepat Waktu{% else %}{{ record.status | capitalize }}{% endif %}
+            </span>
+            <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.75rem;">
+                Menunggu Pulang
+            </span>
+        </div>
 
         {% else %}
         <!-- Not checked in -->
@@ -53,10 +58,10 @@
             <i class="bi bi-exclamation-circle-fill"></i>
         </div>
         <div class="status-info">
-            <h5 class="fw-bold mb-1">Belum Absen</h5>
-            <p class="mb-0 text-muted">Silakan lakukan absensi hari ini</p>
+            <h5 class="fw-bold mb-1">Belum Absen Hari Ini</h5>
+            <p class="mb-0 text-muted">Silakan lakukan check-in terlebih dahulu</p>
         </div>
-        <span class="badge bg-danger-subtle text-danger status-badge">
+        <span class="badge bg-secondary-subtle text-secondary status-badge">
             Belum Absen
         </span>
         {% endif %}
@@ -144,7 +149,7 @@
                     {% elif rec.status == 'terlambat' %}bg-warning-subtle text-warning
                     {% else %}bg-danger-subtle text-danger{% endif %}
                     history-badge">
-                    {{ rec.status | capitalize }}
+                    {% if rec.status == 'hadir' %}Tepat Waktu{% else %}{{ rec.status | capitalize }}{% endif %}
                 </span>
             </div>
             {% endfor %}

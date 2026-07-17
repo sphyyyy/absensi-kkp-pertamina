@@ -91,7 +91,7 @@ def generate_pdf_report(start_date, end_date, title=None):
             format_date(rec.attendance_date),
             format_time(rec.check_in_time),
             format_time(rec.check_out_time),
-            rec.status.capitalize(),
+            'Tepat Waktu' if rec.status == 'hadir' else rec.status.capitalize(),
         ])
 
     if len(data) == 1:
@@ -184,7 +184,7 @@ def generate_excel_report(start_date, end_date):
             format_date(rec.attendance_date),
             format_time(rec.check_in_time),
             format_time(rec.check_out_time),
-            rec.status.capitalize(),
+            'Tepat Waktu' if rec.status == 'hadir' else rec.status.capitalize(),
         ]
         for col, val in enumerate(values, 1):
             cell = ws.cell(row=row, column=col, value=val)
