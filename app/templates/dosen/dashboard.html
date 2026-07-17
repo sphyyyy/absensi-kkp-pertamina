@@ -17,13 +17,13 @@
         </div>
         <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
             <a href="{{ url_for('api.export_pdf', start_date=today, end_date=today) }}"
-               class="btn btn-light btn-sm text-danger border border-danger border-opacity-25 rounded-pill px-3 shadow-sm d-flex align-items-center gap-1.5" target="_blank" title="Export Laporan Hari Ini (PDF)">
-                <i class="bi bi-file-pdf"></i>
+               class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5" target="_blank" title="Export Laporan Hari Ini (PDF)">
+                <i class="bi bi-file-pdf-fill"></i>
                 <span>PDF Hari Ini</span>
             </a>
             <a href="{{ url_for('api.export_excel', start_date=today, end_date=today) }}"
-               class="btn btn-light btn-sm text-success border border-success border-opacity-25 rounded-pill px-3 shadow-sm d-flex align-items-center gap-1.5" target="_blank" title="Export Laporan Hari Ini (Excel)">
-                <i class="bi bi-file-earmark-excel"></i>
+               class="btn btn-outline-success btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5" target="_blank" title="Export Laporan Hari Ini (Excel)">
+                <i class="bi bi-file-earmark-excel-fill"></i>
                 <span>Excel Hari Ini</span>
             </a>
         </div>
@@ -198,13 +198,13 @@
                     <input type="date" class="form-control form-control-sm border-0 bg-transparent shadow-none px-1 text-dark small" id="exportEnd" required style="cursor: pointer;">
                 </div>
                 <div class="d-flex gap-2 ms-md-2">
-                    <button type="button" class="btn btn-light btn-sm text-danger border border-danger border-opacity-25 rounded-pill px-3.5 shadow-sm d-flex align-items-center gap-1.5 fw-medium" onclick="exportReport('pdf')">
-                        <i class="bi bi-file-pdf"></i>
-                        <span>PDF</span>
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-medium" onclick="exportReport('pdf')">
+                        <i class="bi bi-file-pdf-fill"></i>
+                        <span>Export PDF</span>
                     </button>
-                    <button type="button" class="btn btn-light btn-sm text-success border border-success border-opacity-25 rounded-pill px-3.5 shadow-sm d-flex align-items-center gap-1.5 fw-medium" onclick="exportReport('excel')">
-                        <i class="bi bi-file-earmark-excel"></i>
-                        <span>Excel</span>
+                    <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-medium" onclick="exportReport('excel')">
+                        <i class="bi bi-file-earmark-excel-fill"></i>
+                        <span>Export Excel</span>
                     </button>
                 </div>
             </form>

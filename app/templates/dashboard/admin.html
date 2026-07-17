@@ -62,14 +62,14 @@
                 </div>
                 <div class="d-flex flex-wrap align-items-center gap-2">
                     <input type="text" id="searchMhs" class="form-control form-control-sm form-control-dark" placeholder="Cari NIM/Nama/Kampus..." style="width: 210px;">
-                    <a href="{{ url_for('api.get_template_excel') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3" title="Download Template Excel">
-                        <i class="bi bi-download me-1"></i>Template
+                    <a href="{{ url_for('api.get_template_excel') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1" title="Download Template Excel">
+                        <i class="bi bi-download"></i><span>Template</span>
                     </a>
-                    <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalImportExcel">
-                        <i class="bi bi-file-earmark-spreadsheet me-1"></i>Import Excel
+                    <button class="btn btn-outline-success btn-sm rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalImportExcel">
+                        <i class="bi bi-file-earmark-spreadsheet-fill"></i><span>Import Excel</span>
                     </button>
-                    <button class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalAddUser" onclick="setupAddModal('mahasiswa')">
-                        <i class="bi bi-plus-lg me-1"></i>Tambah Manual
+                    <button class="btn btn-primary btn-sm rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1 fw-bold" data-bs-toggle="modal" data-bs-target="#modalAddUser" onclick="setupAddModal('mahasiswa')">
+                        <i class="bi bi-person-plus-fill"></i><span>Tambah Manual</span>
                     </button>
                 </div>
             </div>
@@ -137,8 +137,8 @@
                 <h6 class="fw-bold mb-0 text-primary">
                     <i class="bi bi-person-badge me-2"></i>Daftar Dosen Pembimbing (<span id="dosenCount">{{ dosen_list|length }}</span>)
                 </h6>
-                <button class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalAddUser" onclick="setupAddModal('dosen')">
-                    <i class="bi bi-plus-lg me-1"></i>Tambah Dosen Baru
+                <button class="btn btn-primary btn-sm rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1 fw-bold" data-bs-toggle="modal" data-bs-target="#modalAddUser" onclick="setupAddModal('dosen')">
+                    <i class="bi bi-person-plus-fill"></i><span>Tambah Dosen Baru</span>
                 </button>
             </div>
 
@@ -211,8 +211,8 @@
                             <p class="text-secondary small mb-0">Tentukan koordinat pusat kantor dan batas toleransi jarak absensi masuk/pulang.</p>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-2 shadow-sm fw-medium d-flex align-items-center gap-1 flex-shrink-0" onclick="useMyCurrentLocation(this)" title="Otomatis mengambil koordinat GPS posisi Anda saat ini">
-                        <i class="bi bi-crosshair me-1"></i><span>📍 Set ke Lokasi GPS Sekarang</span>
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3.5 py-1.5 shadow-sm fw-medium d-flex align-items-center gap-1.5 flex-shrink-0" onclick="useMyCurrentLocation(this)" title="Otomatis mengambil koordinat GPS posisi Anda saat ini">
+                        <i class="bi bi-crosshair"></i><span>Set ke Lokasi GPS Sekarang</span>
                     </button>
                 </div>
 
@@ -228,72 +228,58 @@
                         <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Contoh: <code class="text-secondary">119.4327</code></span>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label text-dark fw-semibold small mb-1">Radius Geofence</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control form-control-dark" name="GEOFENCE_RADIUS" value="{{ settings_dict.get('GEOFENCE_RADIUS', '100') }}" required>
-                            <span class="input-group-text bg-light text-secondary small">meter</span>
-                        </div>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Jarak maksimal ke kantor</span>
+                        <label class="form-label text-dark fw-semibold small mb-1">Radius Masuk (Maks. Meter)</label>
+                        <input type="number" class="form-control form-control-dark font-monospace" name="GEOFENCE_RADIUS_METERS" value="{{ settings_dict.get('GEOFENCE_RADIUS_METERS', '350') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Jarak maksimal bisa Check-In</span>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label text-dark fw-semibold small mb-1">Toleransi GPS Laptop</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control form-control-dark" name="MAX_GPS_ACCURACY" value="{{ settings_dict.get('MAX_GPS_ACCURACY', '250') }}" required>
-                            <span class="input-group-text bg-light text-secondary small">meter</span>
-                        </div>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Batas akurasi (250-500m)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CARD 2: Jam Kerja -->
-            <div class="settings-card-item bg-white rounded-4 p-4 mb-4 border shadow-sm">
-                <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
-                    <div class="icon-box bg-warning bg-opacity-10 text-warning rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
-                        <i class="bi bi-clock-fill fs-5"></i>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold mb-1 text-dark">Konfigurasi Rentang Jam Absensi (WITA)</h6>
-                        <p class="text-secondary small mb-0">Atur jadwal waktu buka, batas akhir tepat waktu, dan penutupan sesi absensi harian.</p>
-                    </div>
-                </div>
-
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label text-dark fw-semibold small mb-1">Mulai Absen Masuk</label>
-                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_START" value="{{ settings_dict.get('CHECKIN_START', '07:00') }}" required>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Buka sesi pagi</span>
+                        <label class="form-label text-dark fw-semibold small mb-1">Radius Pulang (Maks. Meter)</label>
+                        <input type="number" class="form-control form-control-dark font-monospace" name="GEOFENCE_RADIUS_PULANG" value="{{ settings_dict.get('GEOFENCE_RADIUS_PULANG', '1000') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Jarak maksimal bisa Check-Out</span>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label text-dark fw-semibold small mb-1">Batas Jam Tepat Waktu</label>
-                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_END" value="{{ settings_dict.get('CHECKIN_END', '07:30') }}" required>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Lewat jam ini dihitung Terlambat</span>
+                        <label class="form-label text-dark fw-semibold small mb-1">Jam Check-In Masuk</label>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_START" value="{{ settings_dict.get('CHECKIN_START', '06:00') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Mulai buka absensi pagi</span>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label text-dark fw-semibold small mb-1">Mulai Absen Pulang</label>
+                        <label class="form-label text-dark fw-semibold small mb-1">Batas Check-In (Terlambat)</label>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_END" value="{{ settings_dict.get('CHECKIN_END', '08:00') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Lewat jam ini dihitung terlambat</span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-dark fw-semibold small mb-1">Jam Absen Pulang (Buka)</label>
                         <input type="time" class="form-control form-control-dark font-monospace" name="CHECKOUT_START" value="{{ settings_dict.get('CHECKOUT_START', '16:00') }}" required>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Buka sesi sore</span>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Sore hari saat pulang dibuka</span>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label text-dark fw-semibold small mb-1">Batas Akhir Pulang</label>
+                        <label class="form-label text-dark fw-semibold small mb-1">Tutup Sistem Absensi Pulang</label>
                         <input type="time" class="form-control form-control-dark font-monospace" name="CHECKOUT_END" value="{{ settings_dict.get('CHECKOUT_END', '23:59') }}" required>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Maksimal hingga pukul 23:59 malam</span>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Batas akhir absensi hari itu</span>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label text-dark fw-semibold small mb-1">Pesan Selamat Datang di Halaman Login</label>
+                        <input type="text" class="form-control form-control-dark" name="WELCOME_MESSAGE" value="{{ settings_dict.get('WELCOME_MESSAGE', 'Sistem Absensi KKP') }}" placeholder="Teks subjudul login...">
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Teks yang muncul di bawah tulisan Selamat Datang pada form login</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- CARD 3: Button Save -->
-            <div class="settings-card-item bg-white rounded-4 p-4 border shadow-sm d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
-                <div class="d-flex align-items-center gap-2 text-secondary small">
-                    <i class="bi bi-info-circle-fill text-primary fs-6"></i>
-                    <span>Semua perubahan konfigurasi langsung berlaku (*runtime*) tanpa perlu restart server.</span>
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-4 pt-3 border-top border-light-subtle">
+                    <div class="d-flex align-items-center gap-2 text-secondary small">
+                        <i class="bi bi-info-circle-fill text-primary fs-6"></i>
+                        <span>Semua perubahan konfigurasi langsung berlaku (*runtime*) tanpa perlu restart server.</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2" onclick="window.location.reload()">
+                            <i class="bi bi-arrow-counterclockwise"></i><span>Reset Form</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4.5 py-2 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-1.5 flex-shrink-0" id="btnSaveSettings">
+                            <i class="bi bi-save-fill"></i><span>Simpan Perubahan Konfigurasi</span>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary rounded-pill px-4 py-2.5 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2 flex-shrink-0" id="btnSaveSettings">
-                    <i class="bi bi-save me-1"></i><span>Simpan Perubahan Konfigurasi</span>
-                </button>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
 
     <!-- TAB 4: AUDIT LOGS -->
     <div class="tab-pane fade" id="tab-logs" role="tabpanel">
@@ -374,9 +360,11 @@
                     <div id="importResult" class="d-none"></div>
                 </div>
                 <div class="modal-footer border-top">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-success btn-sm px-4" id="btnSubmitImport">
-                        <i class="bi bi-upload me-1"></i>Mulai Import Sekarang
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3.5 py-1.5" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i><span>Tutup</span>
+                    </button>
+                    <button type="submit" class="btn btn-success btn-sm rounded-pill px-4 py-1.5 fw-bold d-flex align-items-center gap-1" id="btnSubmitImport">
+                        <i class="bi bi-upload"></i><span>Mulai Import Sekarang</span>
                     </button>
                 </div>
             </form>
@@ -427,8 +415,12 @@
                     </div>
                 </div>
                 <div class="modal-footer border-top">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary btn-sm px-4" id="btnSubmitAdd">Simpan Akun</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3.5 py-1.5" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i><span>Tutup</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4 py-1.5 fw-bold d-flex align-items-center gap-1" id="btnSubmitAdd">
+                        <i class="bi bi-check-circle-fill"></i><span>Simpan Akun</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -479,8 +471,12 @@
                     </div>
                 </div>
                 <div class="modal-footer border-top">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary btn-sm px-4" id="btnSubmitEdit">Simpan Perubahan</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3.5 py-1.5" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i><span>Tutup</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4 py-1.5 fw-bold d-flex align-items-center gap-1" id="btnSubmitEdit">
+                        <i class="bi bi-check-circle-fill"></i><span>Simpan Perubahan</span>
+                    </button>
                 </div>
             </form>
         </div>

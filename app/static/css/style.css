@@ -531,41 +531,138 @@ body {
     color: var(--primary);
 }
 
-.btn-primary-custom {
-    background: linear-gradient(135deg, #003D7A 0%, #00529C 60%, #0066CC 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 14px !important;
-    font-weight: 700;
-    font-size: 1.02rem;
-    letter-spacing: 0.4px;
-    padding: 0.98rem 1.5rem !important;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 8px 25px rgba(0, 61, 122, 0.35);
+/* ===================================
+   UNIVERSAL BUTTON DESIGN SYSTEM (RULE 1 - 5)
+   =================================== */
+
+/* Rule 1 & Rule 3: Button Basics & Behaviors (Normal, Hover, Active, Disabled) */
+.btn {
+    font-weight: 600;
+    font-size: 0.92rem;
+    line-height: 1.4;
+    padding: 0.65rem 1.3rem; /* Horizontal padding twice vertical padding */
+    border-radius: var(--radius-md);
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* Rule 5: Icon alongside text spacing */
+    letter-spacing: 0.2px;
 }
 
-.btn-primary-custom:hover {
-    background: linear-gradient(135deg, #004D99 0%, #0066CC 60%, #0080FF 100%) !important;
-    box-shadow: 0 12px 35px rgba(0, 61, 122, 0.55);
-    transform: translateY(-2px);
+.btn-sm {
+    font-size: 0.84rem !important;
+    padding: 0.52rem 1.1rem !important; /* Minimum height ~38px with 2x padding proportion */
+    border-radius: 50px !important; /* Sleek capsule for secondary/small actions */
 }
 
-.btn-primary-custom:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 12px rgba(0, 61, 122, 0.3);
-}
-
-/* Universal Hover Lift (Levitate) Effect for All Interactive Buttons Across the Application */
-.btn:not(:disabled):not(.disabled) {
-    transition: var(--transition);
-}
-
+/* Rule 3: Universal Hover Lift (Levitate) & Depressed Click State */
 .btn:not(:disabled):not(.disabled):hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
 }
 
 .btn:not(:disabled):not(.disabled):active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.985);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+/* Rule 3: Disabled State */
+.btn:disabled, .btn.disabled {
+    opacity: 0.55 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Rule 2 & 4: Primary Filled Buttons (High Importance Actions) */
+.btn-primary, .btn-primary-custom {
+    background: linear-gradient(135deg, #003D7A 0%, #00529C 60%, #0066CC 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 6px 20px rgba(0, 61, 122, 0.28);
+}
+
+.btn-primary:not(:disabled):hover, .btn-primary-custom:not(:disabled):hover {
+    background: linear-gradient(135deg, #004D99 0%, #0066CC 60%, #0080FF 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 28px rgba(0, 61, 122, 0.45);
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #059669 0%, #10B981 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.25);
+}
+
+.btn-success:not(:disabled):hover {
+    background: linear-gradient(135deg, #047857 0%, #059669 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 24px rgba(16, 185, 129, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.25);
+}
+
+.btn-danger:not(:disabled):hover {
+    background: linear-gradient(135deg, #B91C1C 0%, #DC2626 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 24px rgba(220, 38, 38, 0.4);
+}
+
+/* Rule 2 & 4: Outlined Ghost Buttons (Secondary Actions with Medium Emphasis & Ghost-to-Solid Hover) */
+.btn-outline-primary {
+    background: #FFFFFF !important;
+    border: 1.5px solid var(--primary) !important;
+    color: var(--primary) !important;
+}
+.btn-outline-primary:not(:disabled):hover {
+    background: var(--primary) !important;
+    color: #FFFFFF !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 8px 22px rgba(0, 61, 122, 0.3);
+}
+
+.btn-outline-secondary {
+    background: #FFFFFF !important;
+    border: 1.5px solid #64748B !important;
+    color: #475569 !important;
+}
+.btn-outline-secondary:not(:disabled):hover {
+    background: #475569 !important;
+    color: #FFFFFF !important;
+    border-color: #475569 !important;
+    box-shadow: 0 8px 20px rgba(71, 85, 105, 0.25);
+}
+
+.btn-outline-danger {
+    background: #FFFFFF !important;
+    border: 1.5px solid #DC2626 !important;
+    color: #DC2626 !important;
+}
+.btn-outline-danger:not(:disabled):hover {
+    background: #DC2626 !important;
+    color: #FFFFFF !important;
+    border-color: #DC2626 !important;
+    box-shadow: 0 8px 22px rgba(220, 38, 38, 0.3);
+}
+
+.btn-outline-success {
+    background: #FFFFFF !important;
+    border: 1.5px solid #059669 !important;
+    color: #059669 !important;
+}
+.btn-outline-success:not(:disabled):hover {
+    background: #059669 !important;
+    color: #FFFFFF !important;
+    border-color: #059669 !important;
+    box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3);
 }
 
 /* ========================================================
@@ -702,30 +799,26 @@ body {
     white-space: nowrap;
 }
 
-/* Action Buttons (Large Touch Targets for Mobile) */
+/* Rule 2 & 4: Action Buttons (Large Touch Targets for Mobile attendance) */
 .btn-action {
-    background: #FFFFFF;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    min-height: 64px;
+    border-radius: 16px;
+    padding: 1.25rem 1.6rem;
+    min-height: 66px;
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    color: var(--text-primary);
     text-align: left;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     font-size: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 61, 122, 0.08);
+    text-decoration: none;
 }
 
 .btn-action:hover {
-    color: var(--text-primary);
     transform: translateY(-2px);
 }
 
 .btn-action:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.985);
 }
 
 .btn-action-icon {
@@ -737,44 +830,77 @@ body {
     justify-content: center;
     font-size: 1.5rem;
     flex-shrink: 0;
+    transition: all 0.3s ease;
 }
 
+/* Rule 2 & 4: Absen Masuk -> Primary Filled Button (Main action of the day) */
 .btn-action-checkin {
-    border-left: 5px solid var(--primary);
+    background: linear-gradient(135deg, #003D7A 0%, #00529C 60%, #0066CC 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 8px 24px rgba(0, 61, 122, 0.32);
 }
 
 .btn-action-checkin:hover {
-    border-color: var(--primary);
-    background: #F8FAFC;
-    box-shadow: 0 8px 24px rgba(0, 61, 122, 0.18);
+    background: linear-gradient(135deg, #004D99 0%, #0066CC 60%, #0080FF 100%) !important;
+    box-shadow: 0 12px 32px rgba(0, 61, 122, 0.5);
+    color: #FFFFFF !important;
 }
 
 .btn-action-checkin .btn-action-icon {
-    background: var(--primary);
-    color: white;
+    background: rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+}
+
+.btn-action-checkin .btn-action-text small {
+    color: rgba(255, 255, 255, 0.82) !important;
 }
 
 .btn-action-checkin .btn-action-arrow {
-    color: var(--primary);
+    color: rgba(255, 255, 255, 0.9);
 }
 
+/* Rule 2 & 4: Absen Pulang -> Outlined Ghost Button (Secondary action with Ghost-to-Solid Inversion on hover) */
 .btn-action-checkout {
-    border-left: 5px solid var(--accent);
+    background: #FFFFFF !important;
+    border: 2px solid #DC2626 !important;
+    color: #DC2626 !important;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.08);
 }
 
 .btn-action-checkout:hover {
-    border-color: var(--accent);
-    background: #FFF9F9;
-    box-shadow: 0 8px 24px rgba(237, 28, 36, 0.22);
+    background: #DC2626 !important;
+    color: #FFFFFF !important;
+    border-color: #DC2626 !important;
+    box-shadow: 0 10px 28px rgba(220, 38, 38, 0.35);
 }
 
 .btn-action-checkout .btn-action-icon {
-    background: var(--accent);
-    color: white;
+    background: rgba(239, 68, 68, 0.12);
+    color: #DC2626;
+}
+
+.btn-action-checkout:hover .btn-action-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF !important;
+}
+
+.btn-action-checkout .btn-action-text small {
+    color: #64748B !important;
+    transition: color 0.3s ease;
+}
+
+.btn-action-checkout:hover .btn-action-text small {
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
 .btn-action-checkout .btn-action-arrow {
-    color: var(--accent);
+    color: #DC2626;
+    transition: color 0.3s ease;
+}
+
+.btn-action-checkout:hover .btn-action-arrow {
+    color: #FFFFFF !important;
 }
 
 .btn-action-text {
@@ -782,12 +908,12 @@ body {
 }
 
 .btn-action-text small {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+    font-size: 0.82rem;
 }
 
 .btn-action-arrow {
     font-size: 1.25rem;
+    transition: var(--transition);
     transition: var(--transition);
 }
 
@@ -1360,22 +1486,32 @@ canvas {
    PREMIUM ESTHETIC PROFILE LOGOUT BTN
    =================================== */
 .profile-logout-btn {
-    background: #FFF5F5 !important;
+    background: #FFFFFF !important;
     color: #991B1B !important;
-    border: 1px solid #FECACA !important;
-    box-shadow: 0 2px 6px rgba(153, 27, 27, 0.08) !important;
+    border: 1.5px solid #FECACA !important;
+    box-shadow: 0 2px 6px rgba(153, 27, 27, 0.06) !important;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     letter-spacing: 0.3px;
     font-size: 0.95rem;
     font-weight: 600;
+    padding: 0.85rem 1.7rem !important; /* 2x horizontal padding */
+}
+
+.profile-logout-btn .profile-logout-icon {
+    color: #991B1B !important;
+    transition: color 0.3s ease;
 }
 
 .profile-logout-btn:hover {
     background: #991B1B !important;
     color: #FFFFFF !important;
     border-color: #991B1B !important;
-    box-shadow: 0 6px 18px rgba(153, 27, 27, 0.22) !important;
+    box-shadow: 0 8px 22px rgba(153, 27, 27, 0.28) !important;
     transform: translateY(-2px);
+}
+
+.profile-logout-btn:hover .profile-logout-icon {
+    color: #FFFFFF !important;
 }
 
 .profile-logout-btn:active {
