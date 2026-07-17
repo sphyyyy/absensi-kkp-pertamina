@@ -62,7 +62,7 @@ def _validate_time_window(attendance_type):
 
 
 def _is_late(attendance_type):
-    """Determine if the check-in is late (after CHECKIN_START + 30 min buffer)."""
+    """Determine if the check-in is late (after CHECKIN_END threshold / Batas Jam Tepat Waktu)."""
     if attendance_type != TYPE_CHECKIN:
         return False
     try:
@@ -70,8 +70,14 @@ def _is_late(attendance_type):
     except Exception:
         pass
     now = now_wita().time()
+    end_str = Setting.get('CHECKIN_END', current_app.config.get('CHECKIN_END'))
+    if end_str:
+        try:
+            late_threshold_time = parse_time_string(end_str)
+            return now > late_threshold_time
+        except Exception:
+            pass
     start = parse_time_string(Setting.get('CHECKIN_START', current_app.config['CHECKIN_START']))
-    # Consider late if checked in after 30 minutes past start
     late_threshold = datetime.combine(
         today_wita(), start
     ) + timedelta(minutes=30)

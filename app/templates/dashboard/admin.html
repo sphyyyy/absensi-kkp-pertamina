@@ -272,9 +272,9 @@
                         <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Buka sesi pagi</span>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label text-dark fw-semibold small mb-1">Batas Akhir Masuk</label>
-                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_END" value="{{ settings_dict.get('CHECKIN_END', '09:00') }}" required>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Batas tepat waktu</span>
+                        <label class="form-label text-dark fw-semibold small mb-1">Batas Jam Tepat Waktu</label>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKIN_END" value="{{ settings_dict.get('CHECKIN_END', '07:30') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Lewat jam ini dihitung Terlambat</span>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label text-dark fw-semibold small mb-1">Mulai Absen Pulang</label>
@@ -283,8 +283,8 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label text-dark fw-semibold small mb-1">Batas Akhir Pulang</label>
-                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKOUT_END" value="{{ settings_dict.get('CHECKOUT_END', '18:00') }}" required>
-                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Penutupan sistem harian</span>
+                        <input type="time" class="form-control form-control-dark font-monospace" name="CHECKOUT_END" value="{{ settings_dict.get('CHECKOUT_END', '23:59') }}" required>
+                        <span class="small text-muted d-block mt-1" style="font-size: 0.74rem;">Maksimal hingga pukul 23:59 malam</span>
                     </div>
                 </div>
             </div>
