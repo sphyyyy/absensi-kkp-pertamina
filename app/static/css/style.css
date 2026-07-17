@@ -271,17 +271,14 @@ body {
     pointer-events: none;
 }
 
-/* Tekstur dot & grid halus bernuansa abu-abu perak di atas warna dasar putih bersih (diperkuat agar jelas terlihat namun tetap elegan) */
+/* Tekstur Peta Kontur Topografi Geospasial (Topographic Contour Lines) bernuansa abu-abu perak di atas latar putih bersih */
 .login-bg-texture {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    background-image:
-        radial-gradient(rgba(100, 116, 139, 0.48) 1.6px, transparent 1.6px),
-        linear-gradient(to right, rgba(203, 213, 225, 0.65) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(203, 213, 225, 0.65) 1px, transparent 1px);
-    background-size: 24px 24px, 48px 48px, 48px 48px;
+    background-image: url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2364748B' stroke-width='1.4' stroke-opacity='0.46'%3E%3Cpath d='M0 100 Q 200 150, 400 80 T 800 120' /%3E%3Cpath d='M0 180 Q 220 230, 420 160 T 800 200' /%3E%3Cpath d='M0 260 Q 240 310, 440 240 T 800 280' /%3E%3Cpath d='M0 340 Q 260 390, 460 320 T 800 360' /%3E%3Cpath d='M0 420 Q 280 470, 480 400 T 800 440' /%3E%3Cpath d='M0 500 Q 300 550, 500 480 T 800 520' /%3E%3Cpath d='M0 580 Q 320 630, 520 560 T 800 600' /%3E%3Cpath d='M0 660 Q 340 710, 540 640 T 800 680' /%3E%3Cpath d='M0 740 Q 360 790, 560 720 T 800 760' /%3E%3Cpath d='M180 300 C 250 200, 450 220, 520 320 C 580 420, 450 580, 320 520 C 220 470, 130 380, 180 300 Z' /%3E%3Cpath d='M210 320 C 260 240, 420 250, 480 330 C 530 410, 420 530, 320 480 C 240 440, 170 380, 210 320 Z' /%3E%3Cpath d='M240 340 C 280 280, 390 280, 440 340 C 480 400, 390 480, 320 440 C 260 410, 210 380, 240 340 Z' /%3E%3Cpath d='M270 360 C 290 320, 360 310, 400 350 C 430 390, 360 430, 320 400 C 280 380, 250 390, 270 360 Z' /%3E%3Cpath d='M580 120 C 640 80, 740 100, 760 180 C 780 250, 680 310, 620 260 C 570 220, 540 150, 580 120 Z' /%3E%3Cpath d='M610 140 C 650 110, 710 120, 730 180 C 740 220, 670 260, 630 230 C 590 200, 580 160, 610 140 Z' /%3E%3Cpath d='M640 160 C 660 140, 680 140, 700 180 C 710 200, 660 220, 640 200 C 620 180, 630 170, 640 160 Z' /%3E%3Cpath d='M0 50 Q 150 10, 350 30 T 800 60' /%3E%3Cpath d='M0 780 Q 200 740, 450 760 T 800 790' /%3E%3C/g%3E%3C/svg%3E");
+    background-size: 800px 800px;
     background-position: 0 0;
     z-index: 1;
 }
