@@ -56,12 +56,15 @@
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                     {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4 py-3 px-3 mb-4 shadow-sm border-0 d-flex align-items-center"
-                        role="alert">
-                        <i
-                            class="bi bi-{% if category == 'danger' %}exclamation-triangle{% elif category == 'success' %}check-circle{% else %}info-circle{% endif %}-fill fs-5 me-3 text-{{ category }}"></i>
-                        <div class="small fw-medium flex-grow-1">{{ message }}</div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4 py-2.5 px-3 mb-4 shadow-sm border border-light-subtle d-flex align-items-center justify-content-between"
+                        role="alert" style="background: #FFFFFF !important;">
+                        <div class="d-flex align-items-center gap-2 flex-grow-1 me-2">
+                            <div class="flash-alert-icon">
+                                <i class="bi bi-{% if category == 'danger' %}exclamation-triangle{% elif category == 'success' %}check-circle{% else %}info-circle{% endif %}-fill"></i>
+                            </div>
+                            <div class="small fw-semibold text-dark" style="font-size: 0.85rem; line-height: 1.35;">{{ message }}</div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="padding: 0.6rem; font-size: 0.72rem; opacity: 0.5;"></button>
                     </div>
                     {% endfor %}
                     {% endif %}

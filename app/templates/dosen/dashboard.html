@@ -1,26 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Dashboard Dosen{% endblock %}
+{% block title %}Dashboard Dosen Pembimbing{% endblock %}
 
 {% block extra_css %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4 py-3">
-    <!-- Header -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+    <!-- Header Area -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-2 border-bottom border-light-subtle">
         <div>
-            <h4 class="fw-bold mb-1">Dashboard Monitoring</h4>
-            <p class="text-muted mb-0">
-                <i class="bi bi-calendar3 me-1"></i>{{ today_formatted }}
+            <h4 class="fw-bold text-dark mb-1">Monitoring Absensi Mahasiswa</h4>
+            <p class="text-secondary small mb-0 d-flex align-items-center gap-2">
+                <span><i class="bi bi-calendar3 me-1 text-primary"></i>{{ today_formatted }}</span>
+                <span>•</span>
+                <span>Rekapitulasi kehadiran mahasiswa bimbingan</span>
             </p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
             <a href="{{ url_for('api.export_pdf', start_date=today, end_date=today) }}"
-               class="btn btn-outline-danger btn-sm" target="_blank">
-                <i class="bi bi-file-pdf me-1"></i>Export PDF
+               class="btn btn-light btn-sm text-danger border border-danger border-opacity-25 rounded-pill px-3 shadow-sm d-flex align-items-center gap-1.5" target="_blank" title="Export Laporan Hari Ini (PDF)">
+                <i class="bi bi-file-pdf"></i>
+                <span>PDF Hari Ini</span>
             </a>
             <a href="{{ url_for('api.export_excel', start_date=today, end_date=today) }}"
-               class="btn btn-outline-success btn-sm" target="_blank">
-                <i class="bi bi-file-earmark-excel me-1"></i>Export Excel
+               class="btn btn-light btn-sm text-success border border-success border-opacity-25 rounded-pill px-3 shadow-sm d-flex align-items-center gap-1.5" target="_blank" title="Export Laporan Hari Ini (Excel)">
+                <i class="bi bi-file-earmark-excel"></i>
+                <span>Excel Hari Ini</span>
             </a>
         </div>
     </div>
@@ -28,98 +32,109 @@
     <!-- Summary Cards -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-lg-3">
-            <div class="summary-card">
-                <div class="summary-icon bg-primary-subtle">
-                    <i class="bi bi-people-fill text-primary"></i>
+            <div class="summary-card h-100 d-flex flex-column justify-content-center py-3 px-3">
+                <div class="summary-icon bg-primary-subtle text-primary mb-2" style="width: 42px; height: 42px; font-size: 1.15rem;">
+                    <i class="bi bi-people-fill"></i>
                 </div>
-                <div class="summary-value">{{ total_mahasiswa }}</div>
-                <div class="summary-label">Total Mahasiswa</div>
+                <div class="summary-value fs-4 fw-black text-dark mb-0">{{ total_mahasiswa }}</div>
+                <div class="summary-label text-secondary small fw-medium mt-0">Total Mahasiswa</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="summary-card">
-                <div class="summary-icon bg-success-subtle">
-                    <i class="bi bi-check-circle-fill text-success"></i>
+            <div class="summary-card h-100 d-flex flex-column justify-content-center py-3 px-3">
+                <div class="summary-icon bg-success-subtle text-success mb-2" style="width: 42px; height: 42px; font-size: 1.15rem;">
+                    <i class="bi bi-check-circle-fill"></i>
                 </div>
-                <div class="summary-value">{{ hadir_count }}</div>
-                <div class="summary-label">Hadir Hari Ini</div>
+                <div class="summary-value fs-4 fw-black text-dark mb-0">{{ hadir_count }}</div>
+                <div class="summary-label text-secondary small fw-medium mt-0">Hadir Hari Ini</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="summary-card">
-                <div class="summary-icon bg-warning-subtle">
-                    <i class="bi bi-clock-fill text-warning"></i>
+            <div class="summary-card h-100 d-flex flex-column justify-content-center py-3 px-3">
+                <div class="summary-icon bg-warning-subtle text-warning mb-2" style="width: 42px; height: 42px; font-size: 1.15rem;">
+                    <i class="bi bi-clock-fill"></i>
                 </div>
-                <div class="summary-value">{{ terlambat_count }}</div>
-                <div class="summary-label">Terlambat</div>
+                <div class="summary-value fs-4 fw-black text-dark mb-0">{{ terlambat_count }}</div>
+                <div class="summary-label text-secondary small fw-medium mt-0">Terlambat</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="summary-card">
-                <div class="summary-icon bg-danger-subtle">
-                    <i class="bi bi-x-circle-fill text-danger"></i>
+            <div class="summary-card h-100 d-flex flex-column justify-content-center py-3 px-3">
+                <div class="summary-icon bg-danger-subtle text-danger mb-2" style="width: 42px; height: 42px; font-size: 1.15rem;">
+                    <i class="bi bi-x-circle-fill"></i>
                 </div>
-                <div class="summary-value">{{ alpha_count }}</div>
-                <div class="summary-label">Belum Hadir</div>
+                <div class="summary-value fs-4 fw-black text-dark mb-0">{{ alpha_count }}</div>
+                <div class="summary-label text-secondary small fw-medium mt-0">Belum Hadir</div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
-        <!-- Attendance Table Full Width -->
+        <!-- Attendance Table -->
         <div class="col-12">
-            <div class="glass-card p-4">
-                <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
-                    <h6 class="fw-bold mb-0">
-                        <i class="bi bi-table me-2"></i>Data Absensi
-                    </h6>
-                    <form class="d-flex gap-2" method="GET" action="{{ url_for('dashboard.dosen_dashboard') }}">
-                        <input type="date" class="form-control form-control-sm form-control-dark"
-                               name="date" value="{{ filter_date }}" style="max-width: 160px">
-                        <input type="text" class="form-control form-control-sm form-control-dark"
-                               name="search" value="{{ search }}" placeholder="Cari nama/NIM..."
-                               style="max-width: 160px">
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="bi bi-search"></i>
+            <div class="glass-card p-4 rounded-4 border border-light-subtle shadow-sm bg-white">
+                <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-2 border-bottom border-light-subtle gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-table fs-5 text-primary"></i>
+                        <h6 class="fw-bold mb-0 text-dark">Data Kehadiran Mahasiswa</h6>
+                    </div>
+                    <form class="d-flex flex-wrap align-items-center gap-2" method="GET" action="{{ url_for('dashboard.dosen_dashboard') }}">
+                        <div class="d-flex align-items-center gap-1.5 bg-light px-2.5 py-1 rounded-pill border border-light-subtle">
+                            <i class="bi bi-calendar-date text-secondary small"></i>
+                            <input type="date" class="form-control form-control-sm border-0 bg-transparent shadow-none px-1 text-dark small"
+                                   name="date" value="{{ filter_date }}" style="max-width: 140px; cursor: pointer;">
+                        </div>
+                        <div class="input-group input-group-sm rounded-pill overflow-hidden border border-light-subtle bg-light" style="max-width: 210px;">
+                            <span class="input-group-text bg-transparent border-0 pe-1 text-secondary"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control form-control-sm border-0 bg-transparent shadow-none ps-1 text-dark"
+                                   name="search" value="{{ search }}" placeholder="Cari nama / NIM...">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                            <span>Filter</span>
                         </button>
+                        {% if search or filter_date != today %}
+                        <a href="{{ url_for('dashboard.dosen_dashboard') }}" class="btn btn-light btn-sm text-secondary border border-secondary border-opacity-25 rounded-pill px-2.5" title="Reset Filter">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </a>
+                        {% endif %}
                     </form>
                 </div>
 
                 <div class="table-responsive custom-table-scroll">
-                    <table class="table table-dark-custom" id="attendanceTable">
+                    <table class="table table-hover align-middle mb-0" id="attendanceTable">
                         <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>NIM</th>
-                                <th>Masuk</th>
-                                <th>Pulang</th>
-                                <th>Status</th>
+                            <tr class="text-secondary small fw-semibold border-bottom">
+                                <th class="py-3 px-3 text-center" style="width: 50px;">No</th>
+                                <th class="py-3 px-3">Nama Mahasiswa</th>
+                                <th class="py-3 px-3">NIM</th>
+                                <th class="py-3 px-3 text-center">Waktu Masuk</th>
+                                <th class="py-3 px-3 text-center">Waktu Pulang</th>
+                                <th class="py-3 px-3 text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for rec in pagination.items %}
-                            <tr>
-                                <td>{{ loop.index + (pagination.page - 1) * pagination.per_page }}</td>
-                                <td class="fw-medium">{{ rec.user.full_name }}</td>
-                                <td>{{ rec.user.nim or '-' }}</td>
-                                <td>{{ format_time(rec.check_in_time) }}</td>
-                                <td>{{ format_time(rec.check_out_time) }}</td>
-                                <td>
-                                    <span class="badge
-                                        {% if rec.status == 'hadir' %}bg-success-subtle text-success
-                                        {% elif rec.status == 'terlambat' %}bg-warning-subtle text-warning
-                                        {% elif rec.status == 'izin' %}bg-info-subtle text-info
-                                        {% else %}bg-danger-subtle text-danger{% endif %}">
+                            <tr class="border-bottom border-light-subtle">
+                                <td class="text-center text-secondary small">{{ loop.index + (pagination.page - 1) * pagination.per_page }}</td>
+                                <td class="fw-semibold text-dark px-3">{{ rec.user.full_name }}</td>
+                                <td class="px-3"><span class="text-dark small fw-medium">{{ rec.user.nim or '-' }}</span></td>
+                                <td class="text-center small text-secondary px-3">{{ format_time(rec.check_in_time) }}</td>
+                                <td class="text-center small text-secondary px-3">{{ format_time(rec.check_out_time) }}</td>
+                                <td class="text-center px-3">
+                                    <span class="badge rounded-pill px-3 py-1 fw-medium small
+                                        {% if rec.status == 'hadir' %}bg-success-subtle text-success border border-success border-opacity-25
+                                        {% elif rec.status == 'terlambat' %}bg-warning-subtle text-warning border border-warning border-opacity-25
+                                        {% elif rec.status == 'izin' %}bg-info-subtle text-info border border-info border-opacity-25
+                                        {% else %}bg-danger-subtle text-danger border border-danger border-opacity-25{% endif %}">
                                         {% if rec.status == 'hadir' %}Tepat Waktu{% else %}{{ rec.status | capitalize }}{% endif %}
                                     </span>
                                 </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    <i class="bi bi-inbox" style="font-size: 1.5rem"></i><br>
-                                    Tidak ada data absensi.
+                                <td colspan="6" class="text-center text-secondary py-5">
+                                    <i class="bi bi-inbox fs-2 text-muted opacity-50 d-block mb-2"></i>
+                                    <span class="small">Belum ada catatan absensi mahasiswa untuk filter ini.</span>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -129,12 +144,12 @@
 
                 <!-- Pagination -->
                 {% if pagination.pages > 1 %}
-                <nav class="mt-3">
-                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                <nav class="mt-4 d-flex justify-content-center">
+                    <ul class="pagination pagination-sm mb-0 gap-1">
                         {% if pagination.has_prev %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ pagination.prev_num }}&search={{ search }}&date={{ filter_date }}">
-                                <i class="bi bi-chevron-left"></i>
+                            <a class="page-link rounded-pill px-3 text-secondary border-light-subtle shadow-none" href="?page={{ pagination.prev_num }}&search={{ search }}&date={{ filter_date }}">
+                                <i class="bi bi-chevron-left me-1"></i>Prev
                             </a>
                         </li>
                         {% endif %}
@@ -142,17 +157,17 @@
                         {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
                             {% if p %}
                             <li class="page-item {% if p == pagination.page %}active{% endif %}">
-                                <a class="page-link" href="?page={{ p }}&search={{ search }}&date={{ filter_date }}">{{ p }}</a>
+                                <a class="page-link rounded-pill px-3 {% if p == pagination.page %}bg-primary text-white border-primary{% else %}text-secondary border-light-subtle shadow-none{% endif %}" href="?page={{ p }}&search={{ search }}&date={{ filter_date }}">{{ p }}</a>
                             </li>
                             {% else %}
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                            <li class="page-item disabled"><span class="page-link rounded-pill px-2 border-0 bg-transparent text-secondary">…</span></li>
                             {% endif %}
                         {% endfor %}
 
                         {% if pagination.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ pagination.next_num }}&search={{ search }}&date={{ filter_date }}">
-                                <i class="bi bi-chevron-right"></i>
+                            <a class="page-link rounded-pill px-3 text-secondary border-light-subtle shadow-none" href="?page={{ pagination.next_num }}&search={{ search }}&date={{ filter_date }}">
+                                Next<i class="bi bi-chevron-right ms-1"></i>
                             </a>
                         </li>
                         {% endif %}
@@ -163,31 +178,37 @@
         </div>
     </div>
 
-    <!-- Export Section -->
-    <div class="glass-card p-4 mt-4">
-        <h6 class="fw-bold mb-3">
-            <i class="bi bi-download me-2"></i>Export Laporan (Rentang Tanggal)
-        </h6>
-        <form class="row g-3 align-items-end" id="exportForm">
-            <div class="col-md-4">
-                <label class="form-label small text-muted">Tanggal Mulai</label>
-                <input type="date" class="form-control form-control-dark" id="exportStart" required>
+    <!-- Export Section (Simplified & Sleek) -->
+    <div class="glass-card p-4 mt-4 rounded-4 border border-light-subtle shadow-sm bg-white">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <h6 class="fw-bold mb-1 text-dark d-flex align-items-center gap-2">
+                    <i class="bi bi-cloud-arrow-down fs-5 text-primary"></i>
+                    <span>Export Laporan Kehadiran (Rentang Tanggal)</span>
+                </h6>
+                <p class="text-secondary small mb-0">Unduh rekapitulasi data absensi mahasiswa bimbingan sesuai rentang tanggal yang dipilih.</p>
             </div>
-            <div class="col-md-4">
-                <label class="form-label small text-muted">Tanggal Selesai</label>
-                <input type="date" class="form-control form-control-dark" id="exportEnd" required>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-danger flex-fill" onclick="exportReport('pdf')">
-                        <i class="bi bi-file-pdf me-1"></i>PDF
+            <form class="d-flex flex-wrap align-items-center gap-2" id="exportForm">
+                <div class="d-flex align-items-center gap-1.5 bg-light px-3 py-1.5 rounded-pill border border-light-subtle">
+                    <span class="small text-secondary fw-medium">Mulai:</span>
+                    <input type="date" class="form-control form-control-sm border-0 bg-transparent shadow-none px-1 text-dark small" id="exportStart" required style="cursor: pointer;">
+                </div>
+                <div class="d-flex align-items-center gap-1.5 bg-light px-3 py-1.5 rounded-pill border border-light-subtle">
+                    <span class="small text-secondary fw-medium">Selesai:</span>
+                    <input type="date" class="form-control form-control-sm border-0 bg-transparent shadow-none px-1 text-dark small" id="exportEnd" required style="cursor: pointer;">
+                </div>
+                <div class="d-flex gap-2 ms-md-2">
+                    <button type="button" class="btn btn-light btn-sm text-danger border border-danger border-opacity-25 rounded-pill px-3.5 shadow-sm d-flex align-items-center gap-1.5 fw-medium" onclick="exportReport('pdf')">
+                        <i class="bi bi-file-pdf"></i>
+                        <span>PDF</span>
                     </button>
-                    <button type="button" class="btn btn-outline-success flex-fill" onclick="exportReport('excel')">
-                        <i class="bi bi-file-earmark-excel me-1"></i>Excel
+                    <button type="button" class="btn btn-light btn-sm text-success border border-success border-opacity-25 rounded-pill px-3.5 shadow-sm d-flex align-items-center gap-1.5 fw-medium" onclick="exportReport('excel')">
+                        <i class="bi bi-file-earmark-excel"></i>
+                        <span>Excel</span>
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
