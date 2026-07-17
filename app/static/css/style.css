@@ -670,9 +670,6 @@ body {
 }
 
 .btn-action:hover {
-    border-color: var(--primary);
-    background: #F8FAFC;
-    box-shadow: 0 8px 24px rgba(0, 61, 122, 0.15);
     color: var(--text-primary);
     transform: translateY(-2px);
 }
@@ -696,18 +693,38 @@ body {
     border-left: 5px solid var(--primary);
 }
 
+.btn-action-checkin:hover {
+    border-color: var(--primary);
+    background: #F8FAFC;
+    box-shadow: 0 8px 24px rgba(0, 61, 122, 0.18);
+}
+
 .btn-action-checkin .btn-action-icon {
     background: var(--primary);
     color: white;
+}
+
+.btn-action-checkin .btn-action-arrow {
+    color: var(--primary);
 }
 
 .btn-action-checkout {
     border-left: 5px solid var(--accent);
 }
 
+.btn-action-checkout:hover {
+    border-color: var(--accent);
+    background: #FFF9F9;
+    box-shadow: 0 8px 24px rgba(237, 28, 36, 0.22);
+}
+
 .btn-action-checkout .btn-action-icon {
     background: var(--accent);
     color: white;
+}
+
+.btn-action-checkout .btn-action-arrow {
+    color: var(--accent);
 }
 
 .btn-action-text {
@@ -720,8 +737,8 @@ body {
 }
 
 .btn-action-arrow {
-    color: var(--primary);
     font-size: 1.25rem;
+    transition: var(--transition);
 }
 
 .completed-card {
