@@ -104,16 +104,24 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm shadow-sm rounded-pill overflow-hidden border border-secondary border-opacity-25 bg-white">
-                                    <button class="btn btn-light btn-sm text-primary px-2 border-end border-secondary border-opacity-10" title="Edit Data Profil" onclick="openEditModal({{ m.id }}, 'mahasiswa', '{{ m.nim or '' }}', '{{ m.username }}', '{{ m.full_name }}', '{{ m.email }}', '{{ m.instansi or '' }}', '{{ m.phone or '' }}')">
+                                    <button class="btn btn-light btn-sm text-primary px-2 border-end border-secondary border-opacity-10" title="Edit Data Profil"
+                                            data-user-id="{{ m.id }}" data-role="mahasiswa" data-nim="{{ m.nim or '' }}" data-username="{{ m.username }}" data-fullname="{{ m.full_name }}" data-email="{{ m.email }}" data-instansi="{{ m.instansi or '' }}" data-phone="{{ m.phone or '' }}"
+                                            onclick="handleEditUser(this)">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Reset Password ke mhs123" onclick="resetPassword({{ m.id }}, '{{ m.username }}', 'mhs123')">
+                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Reset Password ke mhs123"
+                                            data-user-id="{{ m.id }}" data-username="{{ m.username }}" data-default-pass="mhs123"
+                                            onclick="handleResetPassword(this)">
                                         <i class="bi bi-key"></i>
                                     </button>
-                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Aktifkan/Nonaktifkan" onclick="toggleStatus({{ m.id }}, '{{ m.username }}')">
+                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Aktifkan/Nonaktifkan"
+                                            data-user-id="{{ m.id }}" data-username="{{ m.username }}"
+                                            onclick="handleToggleStatus(this)">
                                         <i class="bi bi-power"></i>
                                     </button>
-                                    <button class="btn btn-light btn-sm text-danger px-2" title="Hapus Akun" onclick="deleteUser({{ m.id }}, '{{ m.username }}')">
+                                    <button class="btn btn-light btn-sm text-danger px-2" title="Hapus Akun"
+                                            data-user-id="{{ m.id }}" data-username="{{ m.username }}"
+                                            onclick="handleDeleteUser(this)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -170,16 +178,24 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm shadow-sm rounded-pill overflow-hidden border border-secondary border-opacity-25 bg-white">
-                                    <button class="btn btn-light btn-sm text-primary px-2 border-end border-secondary border-opacity-10" title="Edit Data Profil" onclick="openEditModal({{ d.id }}, 'dosen', '', '{{ d.username }}', '{{ d.full_name }}', '{{ d.email }}', '{{ d.instansi or '' }}', '{{ d.phone or '' }}')">
+                                    <button class="btn btn-light btn-sm text-primary px-2 border-end border-secondary border-opacity-10" title="Edit Data Profil"
+                                            data-user-id="{{ d.id }}" data-role="dosen" data-nim="" data-username="{{ d.username }}" data-fullname="{{ d.full_name }}" data-email="{{ d.email }}" data-instansi="{{ d.instansi or '' }}" data-phone="{{ d.phone or '' }}"
+                                            onclick="handleEditUser(this)">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Reset Password ke dosen123" onclick="resetPassword({{ d.id }}, '{{ d.username }}', 'dosen123')">
+                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Reset Password ke dosen123"
+                                            data-user-id="{{ d.id }}" data-username="{{ d.username }}" data-default-pass="dosen123"
+                                            onclick="handleResetPassword(this)">
                                         <i class="bi bi-key"></i>
                                     </button>
-                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Aktifkan/Nonaktifkan" onclick="toggleStatus({{ d.id }}, '{{ d.username }}')">
+                                    <button class="btn btn-light btn-sm text-secondary px-2 border-end border-secondary border-opacity-10" title="Aktifkan/Nonaktifkan"
+                                            data-user-id="{{ d.id }}" data-username="{{ d.username }}"
+                                            onclick="handleToggleStatus(this)">
                                         <i class="bi bi-power"></i>
                                     </button>
-                                    <button class="btn btn-light btn-sm text-danger px-2" title="Hapus Akun" onclick="deleteUser({{ d.id }}, '{{ d.username }}')">
+                                    <button class="btn btn-light btn-sm text-danger px-2" title="Hapus Akun"
+                                            data-user-id="{{ d.id }}" data-username="{{ d.username }}"
+                                            onclick="handleDeleteUser(this)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -834,6 +850,27 @@ async function deleteUser(userId, username) {
     } catch (err) {
         alert('Gagal menghapus pengguna: ' + err.message);
     }
+}
+
+// Helper Handlers for Action Buttons (Mencegah error parsing IDE pada onclick inline dengan data-* attributes)
+function handleEditUser(btn) {
+    const ds = btn.dataset;
+    openEditModal(ds.userId, ds.role, ds.nim || '', ds.username || '', ds.fullname || '', ds.email || '', ds.instansi || '', ds.phone || '');
+}
+
+function handleResetPassword(btn) {
+    const ds = btn.dataset;
+    resetPassword(ds.userId, ds.username, ds.defaultPass);
+}
+
+function handleToggleStatus(btn) {
+    const ds = btn.dataset;
+    toggleStatus(ds.userId, ds.username);
+}
+
+function handleDeleteUser(btn) {
+    const ds = btn.dataset;
+    deleteUser(ds.userId, ds.username);
 }
 
 // Update Settings via AJAX
