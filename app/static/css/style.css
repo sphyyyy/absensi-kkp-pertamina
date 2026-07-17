@@ -271,16 +271,18 @@ body {
     pointer-events: none;
 }
 
-/* Tekstur Peta Kontur Topografi Geospasial asli dari gambar pilihan Anda (menggunakan mix-blend-mode: multiply agar menyatu sempurna dengan latar putih bersih) */
+/* Tekstur Peta Kontur Topografi Geospasial asli dari gambar pilihan Anda (diprogram agar tajam/tidak blur dan menggunakan mix-blend-mode: multiply) */
 .login-bg-texture {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     background-image: url('../bg_topography.png');
-    background-size: cover;
+    background-size: 1100px auto;
     background-position: center;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
     opacity: 0.65;
     mix-blend-mode: multiply;
     z-index: 1;
