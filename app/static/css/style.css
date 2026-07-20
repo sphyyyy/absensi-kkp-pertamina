@@ -768,7 +768,7 @@ body {
     /* Hero Banner di Mobile ditaruh DI ATAS secara kompak & sinematik */
     .login-hero-side {
         order: 1;
-        width: 100%;
+        width: 100% !important;
         height: 230px;
         min-height: 230px;
         max-height: 230px;
@@ -786,6 +786,7 @@ body {
     /* Form Login di Mobile ditaruh DI BAWAH menyambung mulus */
     .login-form-side {
         order: 2;
+        width: 100% !important;
         padding: 2rem 1.6rem 1.8rem;
         border-top-left-radius: 22px;
         border-top-right-radius: 22px;
