@@ -1587,6 +1587,19 @@ body {
         font-size: 1.2rem;
     }
 
+    .stat-card-sm {
+        padding: 0.6rem 0.25rem;
+    }
+
+    .stat-card-sm .stat-value {
+        font-size: clamp(0.85rem, 3.8vw, 1.15rem);
+        letter-spacing: -0.5px;
+    }
+
+    .stat-card-sm .stat-label {
+        font-size: 0.65rem;
+    }
+
     .row.g-3 > [class*="col-"] {
         width: 100%;
     }
