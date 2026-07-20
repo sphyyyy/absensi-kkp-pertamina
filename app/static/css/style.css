@@ -313,12 +313,12 @@ body {
 
 /* Premium Split-Screen Card Architecture */
 .login-card-split {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    background: #FFFFFF;
+    display: flex;
+    flex-direction: row;
+    background: transparent;
     border-radius: 28px;
-    box-shadow: 0 20px 60px rgba(0, 20, 60, 0.12), 0 8px 24px rgba(0, 0, 0, 0.08);
-    border: 1px solid #E2E8F0;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     position: relative;
     overflow: hidden;
     min-height: 600px;
@@ -326,13 +326,18 @@ body {
 
 /* KOLOM KIRI: Form Side */
 .login-form-side {
+    width: 55%;
+    flex-shrink: 0;
     padding: 3.2rem 3.6rem 2.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: #FFFFFF;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     position: relative;
     z-index: 5;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .login-brand-logo {
@@ -378,6 +383,8 @@ body {
 
 /* KOLOM KANAN: Hero Banner Side */
 .login-hero-side {
+    width: 45%;
+    flex-shrink: 0;
     position: relative;
     overflow: hidden;
     background: #001A33;
