@@ -244,11 +244,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #FFFFFF;
-    background-image:
-        radial-gradient(circle at 15% 20%, rgba(0, 61, 122, 0.04) 0%, transparent 45%),
-        radial-gradient(circle at 85% 80%, rgba(237, 28, 36, 0.03) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(0, 163, 224, 0.02) 0%, transparent 60%);
+    background-color: #0F172A;
+    background-image: 
+        linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.45) 100%),
+        url('../bg_login.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     overflow-x: hidden;
     position: relative;
     padding: 1.5rem;
@@ -271,27 +274,13 @@ body {
     pointer-events: none;
 }
 
-/* Tekstur Peta Kontur Topografi Geospasial beresolusi tinggi (Ultra-HD dari topo.png) dengan mix-blend-mode: multiply */
+/* Tekstur Kontur disembunyikan karena menggunakan latar foto Masjid 99 Kubah */
 .login-bg-texture {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../bg_topography.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.65;
-    mix-blend-mode: multiply;
-    z-index: 1;
+    display: none;
 }
 
 .login-bg-shape {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.08;
-    animation: float 18s infinite ease-in-out alternate;
+    display: none;
 }
 
 .shape-1 {
