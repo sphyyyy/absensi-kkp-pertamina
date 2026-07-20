@@ -1,5 +1,7 @@
 import os
+import sys
 import unittest
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import create_app
 from app.extensions import db
 from app.models import User, Setting, Attendance
