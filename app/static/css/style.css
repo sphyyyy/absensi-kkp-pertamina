@@ -825,49 +825,55 @@ h1, h2, h3, h4, h5, h6,
    ======================================================== */
 @media (max-width: 991.98px) {
     .login-page {
-        padding: 0.75rem;
+        padding: 2.5rem 1.25rem;
+        align-items: flex-start;
+    }
+
+    .login-wrapper-split {
+        max-width: 440px;
+        margin: auto;
     }
 
     .login-card-split {
         display: flex;
         flex-direction: column;
-        border-radius: 24px;
+        border-radius: 20px;
         min-height: auto;
+        box-shadow: 0 16px 40px rgba(0, 30, 80, 0.10);
     }
 
-    /* Hero Banner di Mobile ditaruh DI ATAS secara kompak & sinematik */
+    /* Hero Banner di Mobile ditaruh DI ATAS secara ringkas & sinematik */
     .login-hero-side {
         order: 1;
         width: 100% !important;
-        height: 230px;
-        min-height: 230px;
-        max-height: 230px;
+        height: 140px;
+        min-height: 140px;
+        max-height: 140px;
     }
 
     .login-hero-indicators {
-        bottom: 18px;
-        right: 20px;
+        bottom: 12px;
+        right: 16px;
     }
 
     .hero-nav-btn {
         display: none;
-        /* Sembunyikan tombol panah di mobile agar tidak sempit, ganti swipe / auto */
     }
 
-    /* Form Login di Mobile ditaruh DI BAWAH menyambung mulus */
+    /* Form Login di Mobile ditaruh DI BAWAH secara compact */
     .login-form-side {
         order: 2;
         width: 100% !important;
-        padding: 2rem 1.6rem 1.8rem;
-        border-top-left-radius: 22px;
-        border-top-right-radius: 22px;
-        margin-top: -16px;
+        padding: 1.6rem 1.4rem 1.4rem;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+        margin-top: -12px;
         z-index: 10;
-        box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.06);
     }
 
     .login-welcome-title {
-        font-size: 1.65rem;
+        font-size: 1.55rem;
     }
 
     .login-seam-badge {
@@ -876,12 +882,20 @@ h1, h2, h3, h4, h5, h6,
 }
 
 @media (max-width: 575.98px) {
+    .login-page {
+        padding: 2rem 1rem;
+    }
+
+    .login-wrapper-split {
+        max-width: 100%;
+    }
+
     .login-form-side {
-        padding: 1.6rem 1.25rem 1.5rem;
+        padding: 1.35rem 1.15rem 1.25rem;
     }
 
     .login-welcome-title {
-        font-size: 1.45rem;
+        font-size: 1.4rem;
     }
 }
 
