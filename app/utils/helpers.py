@@ -6,7 +6,7 @@ WITA = timezone(timedelta(hours=8))
 
 def now_wita():
     """Get current datetime in WITA timezone."""
-    return datetime.now(WITA)
+    return datetime.now(WITA).replace(tzinfo=None)
 
 
 def today_wita():
