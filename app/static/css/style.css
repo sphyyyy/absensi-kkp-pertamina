@@ -244,14 +244,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #0F172A;
+    background-color: #f8f9fa;
     background-image: 
-        linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.45) 100%),
-        url('../bg_login.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+        linear-gradient(rgba(0, 59, 111, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 59, 111, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
     overflow-x: hidden;
     position: relative;
     padding: 1.5rem;
@@ -315,10 +312,10 @@ body {
 .login-card-split {
     display: flex;
     flex-direction: row;
-    background: transparent;
+    background: #ffffff;
     border-radius: 28px;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 20px 60px rgba(0, 30, 80, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid #E2E8F0;
     position: relative;
     overflow: hidden;
     min-height: 600px;
@@ -332,12 +329,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: #ffffff;
     position: relative;
     z-index: 5;
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    border-right: 1px solid #E2E8F0;
 }
 
 .login-brand-logo {
