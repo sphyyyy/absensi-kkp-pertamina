@@ -44,11 +44,14 @@
     --shadow-lg: 0 8px 32px rgba(0, 61, 122, 0.12);
     --shadow-glow: 0 0 20px rgba(0, 61, 122, 0.2);
 
-    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-title: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font: var(--font-body);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Global Reset ── */
+/* ── Global Reset & Typography ── */
 * {
     margin: 0;
     padding: 0;
@@ -56,12 +59,23 @@
 }
 
 body {
-    font-family: var(--font);
+    font-family: var(--font-body);
     background: var(--bg-dark);
     color: var(--text-primary);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+.page-title, .card-title, .modal-title, .dashboard-title, .stat-value {
+    font-family: var(--font-title);
+    letter-spacing: -0.02em;
+}
+
+.badge, .font-monospace, code, pre, .time-badge, .stat-label, .table-index {
+    font-family: var(--font-mono);
 }
 
 /* ── Scrollbar ── */
@@ -1715,6 +1729,22 @@ body {
 
     .stat-card-sm .stat-label {
         font-size: 0.65rem;
+    }
+
+    /* Mobile UX Polish */
+    .card, .glass-card {
+        border-radius: 16px !important;
+    }
+
+    .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .audit-table-body, .custom-table-scroll-body {
+        max-height: 380px !important;
     }
 
     .row.g-3>[class*="col-"] {
