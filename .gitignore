@@ -1,9 +1,39 @@
-venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+
+# Database
 instance/
-uploads/
-reports/
-.env
 *.db
 *.sqlite
+*.sqlite3
+
+# Environment Variables
+.env
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Uploads & Reports (generated at runtime)
+uploads/
+reports/
+
+# Logs
+*.log

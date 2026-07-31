@@ -14,8 +14,11 @@ def main():
 
     try:
         from pyngrok import ngrok
-        # Pastikan authtoken terkonfigurasi
-        ngrok.set_auth_token("3GZ0yeX4s7D2AvNEQkhhVtGCP22_6V5tPaoctxt9TiQQzaMsa")
+        ngrok_token = os.getenv('NGROK_AUTHTOKEN', '')
+        if not ngrok_token:
+            print("[X] NGROK_AUTHTOKEN belum diatur. Tambahkan di file .env")
+            return
+        ngrok.set_auth_token(ngrok_token)
         
         # Buka tunnel ke port 5000
         tunnel = ngrok.connect(5000, bind_tls=True)
