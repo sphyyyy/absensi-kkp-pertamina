@@ -1,11 +1,13 @@
+import unittest
 import requests
 
-r = requests.get('http://127.0.0.1:5000', allow_redirects=True)
-print(f'Status: {r.status_code}')
-print(f'URL: {r.url}')
-print(f'Has login form: {"login" in r.text.lower()}')
-print(f'Has Pertamina: {"Pertamina" in r.text}')
-print(f'Has KKP: {"KKP" in r.text}')
-print(f'Has username field: {"username" in r.text}')
-print(f'Has password field: {"password" in r.text}')
-print(f'Page length: {len(r.text)} chars')
+class TestHTTPServer(unittest.TestCase):
+    def test_local_server_if_running(self):
+        try:
+            r = requests.get('http://127.0.0.1:5000', allow_redirects=True, timeout=2)
+            self.assertIn(r.status_code, [200, 302])
+        except requests.exceptions.RequestException:
+            self.skipTest("Local dev server is not running on port 5000")
+
+if __name__ == '__main__':
+    unittest.main()

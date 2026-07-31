@@ -1260,28 +1260,6 @@ h1, h2, h3, h4, h5, h6,
     margin-top: 0.75rem;
 }
 
-.camera-container {
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    background: #000;
-    aspect-ratio: 4/3;
-    max-height: 320px;
-}
-
-.camera-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scaleX(-1);
-}
-
-.captured-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-}
-
 /* ===================================
    DOSEN DASHBOARD
    =================================== */

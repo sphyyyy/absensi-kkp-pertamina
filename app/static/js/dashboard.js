@@ -1,78 +1,71 @@
 /**
- * Dashboard attendance flow controller for the KKP Attendance System.
- * Orchestrates the multi-step attendance process: GPS → Camera → Submit → Result.
+ * Dashboard Attendance UI logic.
  */
-
-let currentAttendanceType = null;
+let currentAttendanceType = 'check_in';
 let gpsData = null;
 
 /**
- * Start the attendance flow (called by the action button).
- * @param {string} type - 'check_in' or 'check_out'
+ * Start the attendance flow (check-in or check-out).
  */
 function startAttendance(type) {
     currentAttendanceType = type;
     gpsData = null;
-    Camera.reset();
 
-    // Update modal title
-    const title = type === 'check_in' ? 'Absen Masuk' : 'Absen Pulang';
-    document.getElementById('attendanceModalTitle').textContent = title;
+    // Set modal title
+    const modalTitle = document.getElementById('attendanceModalLabel');
+    if (modalTitle) {
+        modalTitle.textContent = type === 'check_in' ? 'Absen Masuk (Geofence GPS)' : 'Absen Pulang (Geofence GPS)';
+    }
 
-    // Reset all steps
     _showStep('stepGPS');
-    document.getElementById('gpsInfo').classList.add('d-none');
-    document.getElementById('gpsError').classList.add('d-none');
 
     // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));
-    modal.show();
+    const modalEl = document.getElementById('attendanceModal');
+    if (modalEl) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
 
     // Start GPS acquisition
     _acquireGPS();
 }
 
 /**
- * Step 1: Acquire GPS position.
+ * Step 1: Acquire GPS coordinates.
  */
 async function _acquireGPS() {
+    const gpsStatus = document.getElementById('gpsStatus');
+    const gpsSpinner = document.getElementById('gpsSpinner');
+    const gpsError = document.getElementById('gpsError');
+
+    if (gpsStatus) gpsStatus.textContent = 'Mendeteksi lokasi GPS...';
+    if (gpsSpinner) gpsSpinner.classList.remove('d-none');
+    if (gpsError) gpsError.classList.add('d-none');
+
     try {
-        gpsData = await GeoLocation.getCurrentPosition();
+        gpsData = await Geolocation.getCurrentPosition();
 
-        // Display GPS info
-        document.getElementById('gpsLat').textContent = gpsData.latitude.toFixed(6);
-        document.getElementById('gpsLng').textContent = gpsData.longitude.toFixed(6);
-        document.getElementById('gpsAcc').textContent = gpsData.accuracy.toFixed(0) + ' m';
-        document.getElementById('gpsInfo').classList.remove('d-none');
+        if (gpsStatus) {
+            gpsStatus.textContent = `Lokasi terdeteksi! (Akurasi: ±${Math.round(gpsData.accuracy)}m)`;
+        }
+        if (gpsSpinner) gpsSpinner.classList.add('d-none');
 
-        // Move directly to submit step (1-Click Geofence & Wi-Fi Mode!)
+        // Automatically submit after short delay
         setTimeout(() => {
             _submitAttendance();
         }, 800);
 
     } catch (err) {
-        document.getElementById('gpsError').textContent = err.message;
-        document.getElementById('gpsError').classList.remove('d-none');
+        if (gpsError) {
+            gpsError.textContent = err.message;
+            gpsError.classList.remove('d-none');
+        }
+        if (gpsSpinner) gpsSpinner.classList.add('d-none');
     }
 }
 
 /**
- * Step 2: Start camera preview (Deprecated / Unused in 1-Click Geofence Mode).
- */
-async function _startCamera() {}
-
-/**
- * Capture a selfie photo (Deprecated / Unused).
- */
-function capturePhoto() {}
-
-/**
- * Retake the selfie photo (Deprecated / Unused).
- */
-function retakePhoto() {}
-
-/**
- * Step 3: Submit attendance data to the server (1-Click Geofence & Wi-Fi Check).
+ * Step 2: Submit attendance data to the server (Geofence GPS).
  */
 async function _submitAttendance() {
     _showStep('stepSubmit');
@@ -85,7 +78,6 @@ async function _submitAttendance() {
         latitude: gpsData.latitude,
         longitude: gpsData.longitude,
         accuracy: gpsData.accuracy,
-        photo: null,
     };
 
     try {
@@ -97,7 +89,7 @@ async function _submitAttendance() {
 }
 
 /**
- * Step 4: Display the result.
+ * Step 3: Display the result.
  */
 function _showResult(success, message) {
     _showStep('stepResult');
@@ -115,14 +107,14 @@ function _showResult(success, message) {
         title.textContent = 'Gagal';
         title.className = 'fw-bold mt-3 text-danger';
     }
-    msg.textContent = message;
+    if (msg) msg.textContent = message;
 }
 
 /**
  * Show a specific step and hide others.
  */
 function _showStep(stepId) {
-    const steps = ['stepGPS', 'stepCamera', 'stepSubmit', 'stepResult'];
+    const steps = ['stepGPS', 'stepSubmit', 'stepResult'];
     steps.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -131,13 +123,11 @@ function _showStep(stepId) {
     });
 }
 
-// Clean up camera when modal closes
+// Reload page on modal close if successful
 document.addEventListener('DOMContentLoaded', function () {
     const modalEl = document.getElementById('attendanceModal');
     if (modalEl) {
         modalEl.addEventListener('hidden.bs.modal', function () {
-            Camera.stop();
-            // Reload page if attendance was successful
             const resultTitle = document.getElementById('resultTitle');
             if (resultTitle && resultTitle.textContent === 'Berhasil!') {
                 window.location.reload();

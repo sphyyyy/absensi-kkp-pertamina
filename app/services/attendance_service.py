@@ -1,4 +1,3 @@
-import base64
 from datetime import datetime, timedelta, time
 
 from flask import current_app, request as flask_request
@@ -6,7 +5,6 @@ from flask import current_app, request as flask_request
 from app.extensions import db
 from app.models import Attendance, Log, Setting
 from app.services.geofence_service import is_within_geofence
-from app.services.photo_service import validate_photo, save_photo
 from app.utils.helpers import now_wita, today_wita, parse_time_string
 from app.utils.constants import (
     STATUS_HADIR, STATUS_TERLAMBAT,
@@ -42,8 +40,6 @@ def _validate_time_window(attendance_type):
 
     if attendance_type == TYPE_CHECKIN:
         start = parse_time_string(Setting.get('CHECKIN_START', current_app.config['CHECKIN_START']))
-        # 1.B: Dilarang jika sebelum jam masuk (misal < 07:00). Tapi setelah/mulai jam masuk,
-        # mahasiswa bebas absen masuk tanpa pop-up larangan sampai akhir hari (23:59:59).
         if now < start:
             return False, (
                 f'{ERR_OUTSIDE_TIME_WINDOW} '
@@ -52,7 +48,6 @@ def _validate_time_window(attendance_type):
         return True, None
     else:
         start = parse_time_string(Setting.get('CHECKOUT_START', current_app.config['CHECKOUT_START']))
-        # 2: Untuk absen pulang, batasnya sampai akhir/pergantian hari (23:59:59).
         if now < start:
             return False, (
                 f'{ERR_OUTSIDE_TIME_WINDOW} '
@@ -97,7 +92,7 @@ def process_checkin(user_id, data):
 
     Args:
         user_id: ID of the authenticated user.
-        data: dict with keys: latitude, longitude, accuracy, photo (base64).
+        data: dict with keys: latitude, longitude, accuracy.
 
     Returns:
         tuple: (success: bool, message: str)
@@ -134,33 +129,17 @@ def process_checkin(user_id, data):
     if not within:
         radius = float(Setting.get('GEOFENCE_RADIUS', current_app.config['GEOFENCE_RADIUS_METERS']))
         return False, f'{ERR_OUTSIDE_GEOFENCE} Jarak Anda: {distance}m (Maksimal: {radius}m dari kantor Pertamina).'
-    # 6. Validate and save photo (Optional / 1-Click Geofence Mode)
-    photo_b64 = data.get('photo')
-    if photo_b64:
-        try:
-            photo_bytes = base64.b64decode(photo_b64)
-            photo_valid, photo_err = validate_photo(photo_bytes)
-            if photo_valid:
-                filename = save_photo(photo_bytes, user_id, TYPE_CHECKIN)
-            else:
-                filename = '1-click-geofence'
-        except Exception:
-            filename = '1-click-geofence'
-    else:
-        filename = '1-click-geofence'
 
-    # 7. Determine status (hadir or terlambat)
+    # 6. Determine status (hadir or terlambat)
     status = STATUS_TERLAMBAT if _is_late(TYPE_CHECKIN) else STATUS_HADIR
 
-    # 8. Save attendance record
+    # 7. Save attendance record
     now = now_wita()
     if existing:
-        # Update existing record (edge case: record created for 'izin')
         existing.check_in_time = now.time()
         existing.latitude_in = latitude
         existing.longitude_in = longitude
         existing.accuracy_in = accuracy
-        existing.photo_in = filename
         existing.ip_address_in = _get_client_ip()
         existing.user_agent = flask_request.headers.get('User-Agent', '')[:500]
         existing.status = status
@@ -173,7 +152,6 @@ def process_checkin(user_id, data):
             latitude_in=latitude,
             longitude_in=longitude,
             accuracy_in=accuracy,
-            photo_in=filename,
             ip_address_in=_get_client_ip(),
             user_agent=flask_request.headers.get('User-Agent', '')[:500],
             status=status,
@@ -183,7 +161,7 @@ def process_checkin(user_id, data):
 
     db.session.commit()
 
-    # 9. Log activity
+    # 8. Log activity
     Log.log(
         action='check_in',
         detail=f'Check-in at {now.strftime("%H:%M")} | Status: {status} | Distance: {distance}m',
@@ -199,7 +177,7 @@ def process_checkout(user_id, data):
 
     Args:
         user_id: ID of the authenticated user.
-        data: dict with keys: latitude, longitude, accuracy, photo (base64).
+        data: dict with keys: latitude, longitude, accuracy.
 
     Returns:
         tuple: (success: bool, message: str)
@@ -238,33 +216,18 @@ def process_checkout(user_id, data):
     if not within:
         radius = float(Setting.get('GEOFENCE_RADIUS', current_app.config['GEOFENCE_RADIUS_METERS']))
         return False, f'{ERR_OUTSIDE_GEOFENCE} Jarak Anda: {distance}m (Maksimal: {radius}m dari kantor Pertamina).'
-    # 5. Validate and save photo (Optional / 1-Click Geofence Mode)
-    photo_b64 = data.get('photo')
-    if photo_b64:
-        try:
-            photo_bytes = base64.b64decode(photo_b64)
-            photo_valid, photo_err = validate_photo(photo_bytes)
-            if photo_valid:
-                filename = save_photo(photo_bytes, user_id, TYPE_CHECKOUT)
-            else:
-                filename = '1-click-geofence'
-        except Exception:
-            filename = '1-click-geofence'
-    else:
-        filename = '1-click-geofence'
 
-    # 6. Update attendance record
+    # 5. Update attendance record
     now = now_wita()
     existing.check_out_time = now.time()
     existing.latitude_out = latitude
     existing.longitude_out = longitude
     existing.accuracy_out = accuracy
-    existing.photo_out = filename
     existing.ip_address_out = _get_client_ip()
 
     db.session.commit()
 
-    # 7. Log activity
+    # 6. Log activity
     Log.log(
         action='check_out',
         detail=f'Check-out at {now.strftime("%H:%M")} | Distance: {distance}m',

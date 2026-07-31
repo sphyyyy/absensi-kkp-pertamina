@@ -51,9 +51,10 @@ class BaseConfig:
     MAX_CONTENT_LENGTH = int(os.getenv('MAX_UPLOAD_SIZE_MB', 5)) * 1024 * 1024
     UPLOAD_FOLDER = os.getenv(
         'UPLOAD_FOLDER',
-        '/tmp/selfies' if is_serverless_env() else 'uploads/selfies'
+        '/tmp/uploads' if is_serverless_env() else 'uploads'
     )
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
+    ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'pdf'}
+
 
     # Geofence — PT. Pertamina Patra Niaga Regional Sulawesi
     GEOFENCE_LATITUDE = float(os.getenv('GEOFENCE_LATITUDE', -5.1477))

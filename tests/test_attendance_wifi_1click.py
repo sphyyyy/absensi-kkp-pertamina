@@ -29,7 +29,7 @@ class Test1ClickAttendanceWifi(unittest.TestCase):
         db.session.add(self.user)
         db.session.commit()
 
-        # Set default geofence to Makassar Pertamina or local center
+        # Set default geofence
         Setting.set('GEOFENCE_LAT', '-5.1477')
         Setting.set('GEOFENCE_LNG', '119.4327')
         Setting.set('GEOFENCE_RADIUS', '500')
@@ -41,18 +41,16 @@ class Test1ClickAttendanceWifi(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_01_1click_checkin_without_photo(self):
-        """Verify 1-Click Check-In works without a photo when Wi-Fi check is disabled."""
+    def test_01_geofence_checkin(self):
+        """Verify Check-In works when Wi-Fi check is disabled."""
         self.client.post('/auth/login', data={'username': 'mhs_wifi', 'password': 'mhs123'}, follow_redirects=True)
         
-        # Disable wifi check
         Setting.set('ENABLE_WIFI_VALIDATION', 'false')
 
         payload = {
             'latitude': -5.1477,
             'longitude': 119.4327,
             'accuracy': 10,
-            'photo': None  # No selfie sent!
         }
         res = self.client.post('/attendance/check-in', json=payload)
         data = res.get_json()
@@ -62,19 +60,16 @@ class Test1ClickAttendanceWifi(unittest.TestCase):
         # Check database record
         att = Attendance.query.filter_by(user_id=self.user.id).first()
         self.assertIsNotNone(att)
-        self.assertEqual(att.photo_in, '1-click-geofence')
-        print(" -> [TEST 1 PASSED] 1-Click Check-In without selfie succeeded!")
+        print(" -> [TEST 1 PASSED] Check-In succeeded!")
 
     def test_02_outside_geofence_rejection(self):
         """Verify check-in is rejected when location is outside the GPS geofence radius."""
         self.client.post('/auth/login', data={'username': 'mhs_wifi', 'password': 'mhs123'}, follow_redirects=True)
 
-        # Send coordinates far outside office geofence (-5.1477, 119.4327)
         payload = {
             'latitude': -6.2000,
             'longitude': 106.8166,
             'accuracy': 10,
-            'photo': None
         }
         res = self.client.post('/attendance/check-in', json=payload)
         data = res.get_json()
@@ -91,7 +86,6 @@ class Test1ClickAttendanceWifi(unittest.TestCase):
             'latitude': -5.1477,
             'longitude': 119.4327,
             'accuracy': 10,
-            'photo': None
         }
         res = self.client.post('/attendance/check-in', json=payload)
         data = res.get_json()

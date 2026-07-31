@@ -139,7 +139,6 @@ def _ensure_directories(app):
     from app.config import is_serverless_env
     is_serverless = is_serverless_env()
     dirs = [
-        app.config.get('UPLOAD_FOLDER', '/tmp/selfies' if is_serverless else 'uploads/selfies'),
         '/tmp/reports' if is_serverless else 'reports',
     ]
     for d in dirs:

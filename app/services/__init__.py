@@ -4,7 +4,6 @@ from app.services.attendance_service import (
     get_user_attendance_history, get_user_statistics,
 )
 from app.services.geofence_service import is_within_geofence, haversine_distance
-from app.services.photo_service import validate_photo, save_photo
 from app.services.report_service import generate_pdf_report, generate_excel_report
 
 __all__ = [
@@ -12,6 +11,6 @@ __all__ = [
     'process_checkin', 'process_checkout', 'get_today_attendance',
     'get_user_attendance_history', 'get_user_statistics',
     'is_within_geofence', 'haversine_distance',
-    'validate_photo', 'save_photo',
     'generate_pdf_report', 'generate_excel_report',
 ]
+

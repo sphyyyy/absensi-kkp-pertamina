@@ -65,11 +65,6 @@ def allowed_file(filename, allowed_extensions):
     )
 
 
-def generate_filename(user_id, attendance_type):
-    """Generate a unique filename for selfie photos."""
-    timestamp = now_wita().strftime('%Y%m%d_%H%M%S')
-    return f'{user_id}_{attendance_type}_{timestamp}.jpg'
-
 
 def clean_time_string(time_str, default='07:00'):
     """Clean and normalize time string to 'HH:MM' format safely (e.g. '23.000' -> '23:00')."""

@@ -204,24 +204,6 @@
                     <div id="gpsError" class="alert alert-danger d-none mt-3"></div>
                 </div>
 
-                <!-- Step 2: Camera / Selfie -->
-                <div id="stepCamera" class="attendance-step d-none">
-                    <h6 class="fw-bold mb-3">Ambil Foto Selfie</h6>
-                    <div class="camera-container">
-                        <video id="cameraPreview" autoplay playsinline class="camera-video"></video>
-                        <canvas id="cameraCanvas" class="d-none"></canvas>
-                        <img id="capturedPhoto" class="captured-photo d-none" alt="Selfie">
-                    </div>
-                    <div class="d-flex gap-2 mt-3">
-                        <button class="btn btn-outline-light flex-fill" id="btnCapture" onclick="capturePhoto()">
-                            <i class="bi bi-camera me-1"></i> Ambil Foto
-                        </button>
-                        <button class="btn btn-outline-warning flex-fill d-none" id="btnRetake" onclick="retakePhoto()">
-                            <i class="bi bi-arrow-clockwise me-1"></i> Ulang
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Step 3: Submit -->
                 <div id="stepSubmit" class="attendance-step d-none">
                     <div class="text-center">
@@ -246,6 +228,5 @@
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/geolocation.js') }}"></script>
-<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}
