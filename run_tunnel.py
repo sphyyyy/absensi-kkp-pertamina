@@ -11,9 +11,10 @@ def main():
     print("=" * 65, flush=True)
     print("[*] Memastikan server lokal Flask (port 5000) berjalan...", flush=True)
     print("[*] Menghubungkan ke jaringan Ngrok menggunakan Authtoken Anda...", flush=True)
-
     try:
-        from pyngrok import ngrok
+        import importlib
+        ngrok = importlib.import_module('pyngrok.ngrok')
+
         ngrok_token = os.getenv('NGROK_AUTHTOKEN', '')
         if not ngrok_token:
             print("[X] NGROK_AUTHTOKEN belum diatur. Tambahkan di file .env")
