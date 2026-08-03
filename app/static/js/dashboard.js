@@ -43,7 +43,7 @@ async function _acquireGPS() {
     if (gpsError) gpsError.classList.add('d-none');
 
     try {
-        gpsData = await Geolocation.getCurrentPosition();
+        gpsData = await GeoLocation.getCurrentPosition();
 
         if (gpsStatus) {
             gpsStatus.textContent = `Lokasi terdeteksi! (Akurasi: ±${Math.round(gpsData.accuracy)}m)`;
